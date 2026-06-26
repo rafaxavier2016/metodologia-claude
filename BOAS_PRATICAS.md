@@ -1,5 +1,7 @@
 # Boas Práticas de Trabalho — guia genérico
 
+> 📌 **PORTA DE ENTRADA ÚNICA: se só puder ler um arquivo, leia ESTE.** É completo e autossuficiente — 9 regras + PRÉ-VOO (Seção 0) + disciplina + UX + armadilhas. (`METODOLOGIA.md` é a versão original congelada das 9 regras; este aqui é o vivo, onde acrescentamos.)
+>
 > Este é um guia de **boas práticas** para construir software com cuidado e profissionalismo — sugestões, não regras de um projeto específico. Serve para qualquer trabalho: automação, banco de dados, agentes de IA, backend, sites, apps. A ideia é simples: ler **um lugar** no começo de uma sessão e já saber como trabalhar bem, evitando retrabalho e amadorismo.
 >
 > Cada item abaixo nasceu de um erro real que custou tempo. Trate-os como conselhos de quem já tropeçou — adapte ao seu contexto, mas pense duas vezes antes de ignorar.
