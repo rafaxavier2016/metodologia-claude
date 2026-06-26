@@ -37,6 +37,19 @@ Nesses momentos: **mais** pré-voo, não menos.
 `BACKUP → STAGING/ISOLAMENTO → REGRESSÃO → CANÁRIO → PRODUÇÃO`. Não pule etapas.
 Se não existe um ambiente espelho, **você projeta o ensaio isolado** — escolha a forma mais isolada viável: ambiente espelho > branch efêmero > shadow/cópia > tabela/registro temporário > teste offline da lógica > dry-run. O canário (aplicar numa fatia mínima e reversível — ex.: 1 cliente, a própria linha, 1 tabela) é o último degrau antes de generalizar.
 
+### A trava MECÂNICA: hook de pré-voo (como montar e por quê)
+
+A camada mais forte do enforcement não depende de ninguém lembrar — é um **hook** que o próprio harness executa. No Claude Code, um hook `PreToolUse` roda **antes** de uma ferramenta e pode injetar contexto (`additionalContext`) ou pedir confirmação. A ideia: **antes de toda ação de ESCRITA em produção, o checklist de pré-voo é injetado automaticamente** no contexto — você não tem como "esquecer que ele existe".
+
+**Por que vale a pena:** a disciplina escrita num doc só funciona se for lida e seguida; o hook torna o lembrete inevitável, bem no instante da ação. É a diferença entre "regra que se confia que vão seguir" e "trilho".
+
+**Como montar (genérico, adapte ao seu stack)** — em `settings.json`, um `PreToolUse` com:
+- **Matcher nas ferramentas de escrita do seu ambiente** — ex.: as ferramentas MCP que alteram banco/automação (migration, update/create/delete, gerenciar credenciais) → lembrete SEMPRE.
+- **Matcher em `Bash`** com um comando que lê o stdin e só lembra se o comando casar um **padrão de escrita** (nomes de scripts de deploy/baixa/fix, ou métodos `PUT/PATCH/DELETE` apontando pro host de produção). Leitura (probes, `SELECT`, `ls`) **não** dispara.
+- O comando do hook imprime `{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"<checklist de pré-voo>"}}`. Mantenha **não-bloqueante** (só lembra); se quiser mais rígido para ações destrutivas, use `permissionDecision:"ask"` (o harness pede aprovação ao dono, mostrando o checklist).
+
+**Cuidados:** (1) prefira **conservador** — lembrar "à toa" é melhor que deixar passar; (2) garanta que **leituras não disparam** (filtre por padrão de comando); (3) gerencie/desligue pelo comando `/hooks`; (4) `settings.json` é **por máquina** — cada ambiente precisa montar o seu (não viaja junto com este doc); (5) teste o comando do hook isolado (pipe um payload de exemplo) antes de confiar — hook que silenciosamente não faz nada é pior que nenhum.
+
 ---
 
 ## 1. Princípios de engenharia (o coração)
