@@ -6,6 +6,37 @@
 
 ---
 
+## 0. A regra-mãe: a disciplina vale DESDE A CRIAÇÃO — e é estrutural, não força de vontade
+
+A maioria dos erros graves **nasce enquanto se constrói** — um script "temporário" com bug, uma suposição que não foi testada, um escopo que se ampliou sozinho. Na hora de "subir pra produção" geralmente já se é cuidadoso; o estrago foi plantado antes. **Por isso toda a disciplina abaixo vale para qualquer toque em estado compartilhado ou persistente** — criar/editar um fluxo, criar uma tabela/coluna, rodar um script que bate em produção, mexer numa credencial — **não só no momento do deploy.**
+
+**Enforcement tem que ser estrutural, não voluntário.** Regra que depende de alguém "lembrar" será violada uma hora — ainda mais sob empolgação ou pressa. Prefira, nesta ordem de confiança:
+1. **Trava mecânica** (hook/permissão/gate que bloqueia a ação) — não depende de ninguém lembrar.
+2. **Pré-voo visível** (declarado na conversa, abaixo) — quem acompanha consegue cortar antes do estrago.
+3. **Canário/reversível por padrão** — quando algo escapa, o raio é mínimo e volta em segundos.
+4. **Auditoria de rotina** — pega o que passou em dias, não em semanas.
+
+### PRÉ-VOO — declare ANTES de cada mudança que toca estado real (e PARE se algo for ❌)
+- 🔒 **Backup/versão** do que vou tocar (sei reverter).
+- 🔎 **Causa com evidência** (log, execução, linha de banco) — nunca chute.
+- 🎯 **Escopo = exatamente o que foi pedido.** Não inferir nem ampliar. Ação financeira/sensível só com a **entidade nomeada e confirmada** por quem é dono.
+- 🧪 **Testado isolado com caso/dados REAIS** (não um exemplo inventado/"magro").
+- ✅ **Resultado validado de verdade** (o efeito concreto aconteceu — não confiar em "success: true").
+- ↩️ **Reversão pronta** e à mão.
+
+### Quando a disciplina escorrega (redobre o cuidado nestes momentos)
+- Quando você está **confiante/empolgado** para resolver (pula direto pra solução).
+- Quando parece **pequeno/trivial** ("é só um scriptzinho", "é temporário").
+- Quando está **inferindo escopo** (fazendo mais do que foi pedido).
+- Em **sessão longa**, sob pressão de contexto.
+Nesses momentos: **mais** pré-voo, não menos.
+
+### Fluxo fixo e como montar o "ambiente seguro" quando não há um pronto
+`BACKUP → STAGING/ISOLAMENTO → REGRESSÃO → CANÁRIO → PRODUÇÃO`. Não pule etapas.
+Se não existe um ambiente espelho, **você projeta o ensaio isolado** — escolha a forma mais isolada viável: ambiente espelho > branch efêmero > shadow/cópia > tabela/registro temporário > teste offline da lógica > dry-run. O canário (aplicar numa fatia mínima e reversível — ex.: 1 cliente, a própria linha, 1 tabela) é o último degrau antes de generalizar.
+
+---
+
 ## 1. Princípios de engenharia (o coração)
 
 1. **Pesquise antes de construir.** Uma hora lendo a documentação oficial, o GitHub e o que o mercado já resolveu costuma poupar semanas. Antes de escrever um integrador do zero, pergunte: já existe uma API/biblioteca pronta para isso?
@@ -73,7 +104,7 @@ Toda ferramenta tem comportamentos que só se aprende apanhando. A boa prática 
 1. Leia este arquivo inteiro (boas práticas) e qualquer guia específico do projeto.
 2. Entenda o estado atual antes de propor mudança — o que já existe, o que está em produção, o que está quebrado.
 3. Apresente um plano em ondas com critério de aceite, e só execute depois de combinado.
-4. Faça backup/versão antes de tocar em qualquer coisa.
+4. Faça backup/versão antes de tocar em qualquer coisa — e **declare o PRÉ-VOO (seção 0) antes de cada mudança, inclusive ao criar/editar** (não só no deploy).
 5. Trabalhe no ambiente seguro, valide com casos reais, confirme o resultado de verdade, limpe os dados de teste.
 6. Documente o que aprendeu — inclusive as armadilhas — para a próxima sessão começar mais esperta que esta.
 
