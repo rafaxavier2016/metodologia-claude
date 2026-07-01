@@ -1,6 +1,10 @@
 # Boas Práticas de Trabalho — guia genérico
 
-> 📌 **PORTA DE ENTRADA ÚNICA: se só puder ler um arquivo, leia ESTE.** É completo e autossuficiente — 9 regras + PRÉ-VOO (Seção 0) + disciplina + UX + armadilhas. (`METODOLOGIA.md` é a versão original congelada das 9 regras; este aqui é o vivo, onde acrescentamos.)
+> 📌 **PORTA DE ENTRADA ÚNICA: se só puder ler um arquivo, leia ESTE.** É completo e autossuficiente — 10 princípios + PRÉ-VOO (Seção 0) + disciplina + UX + armadilhas. (`METODOLOGIA.md` é a versão original congelada das 9 regras; este aqui é o vivo, onde acrescentamos.)
+>
+> 🌐 **Endereço permanente (qualquer sessão, local ou nuvem):**
+> `https://raw.githubusercontent.com/rafaxavier2016/metodologia-claude/master/BOAS_PRATICAS.md`
+> Cópia local (quando no PC principal): `Downloads\Projeto_Isabella_Core\docs\BOAS_PRATICAS.md` — mantenha as duas em sincronia ao editar.
 >
 > Este é um guia de **boas práticas** para construir software com cuidado e profissionalismo — sugestões, não regras de um projeto específico. Serve para qualquer trabalho: automação, banco de dados, agentes de IA, backend, sites, apps. A ideia é simples: ler **um lugar** no começo de uma sessão e já saber como trabalhar bem, evitando retrabalho e amadorismo.
 >
@@ -72,6 +76,8 @@ A camada mais forte do enforcement não depende de ninguém lembrar — é um **
 
 9. **Segurança acima de tudo.** Segredos (token, senha, API key, cookie, dado pessoal) nunca entram em arquivo versionado, prompt, chat, print ou material público — eles vivem em cofre de credencial ou variável de ambiente. Nada de publicar repositório com segredo no histórico; nada de copiar arquivos de credencial entre máquinas. Em material público, evite expor nomes/dados internos — use termos institucionais. Achou um segredo exposto? Pare tudo e avise na hora.
 
+10. **Meça o DEPOIS, não só o antes.** *(adicionado 2026-06-08)* As regras 1-9 garantem que nada **quebrou**; nenhuma delas garante que algo **melhorou**. Toda mudança de comportamento (prompt, fluxo, régua, copy) deve ter uma **métrica de sucesso definida ANTES** ("essa mudança melhora X") **e verificada DEPOIS** com dado real de produção (taxa de conversão, tempo de resposta, erros por dia). Sem isso, avalia-se mudança "no olho" — e o olho aprova o que parece bom, não o que funciona. Se o sistema já registra eventos, a métrica costuma ser uma consulta simples; o que falta é o hábito de defini-la e olhá-la.
+
 ---
 
 ## 2. Disciplina de execução (o dia a dia)
@@ -111,6 +117,7 @@ Toda ferramenta tem comportamentos que só se aprende apanhando. A boa prática 
 - **Encoding.** Garanta UTF-8 ponta a ponta — acentos quebram em fronteiras de ferramenta (terminais, libs HTTP) de formas silenciosas.
 - **Não derrube serviços compartilhados por engano.** Operações de "desligar/religar" via API podem ter efeitos colaterais (perder um endpoint, dropar uma conexão) que a interface gráfica não tem. Quando uma mudança afeta algo que muitos consomem, prefira o caminho mais seguro e teste o impacto isolado primeiro.
 - **Dados duplicados entre fontes.** Quando o mesmo fato chega por dois caminhos (ex: um pagamento que aparece no gateway **e** no sistema de baixa), somar as fontes conta em dobro. Para qualquer número que importa, **deduplique por uma chave de negócio** (ex: identidade + período + valor) e tenha uma única consulta canônica — não deixe o número ser improvisado a cada vez.
+- **Camadas aditivas de prompt/config são dívida técnica.** Corrigir um prompt/configuração empilhando blocos "este sobrescreve o anterior" funciona no curto prazo, mas depois de várias camadas o documento vira arqueologia: instruções contraditórias convivem, contexto é desperdiçado e ninguém sabe mais o que vale. **Consolide periodicamente** num documento único e limpo — e faça essa consolidação COM uma bateria de regressão pronta, porque achatar camadas é exatamente o tipo de mudança que quebra comportamento em silêncio.
 
 ---
 
@@ -118,10 +125,11 @@ Toda ferramenta tem comportamentos que só se aprende apanhando. A boa prática 
 
 1. Leia este arquivo inteiro (boas práticas) e qualquer guia específico do projeto.
 2. Entenda o estado atual antes de propor mudança — o que já existe, o que está em produção, o que está quebrado.
-3. Apresente um plano em ondas com critério de aceite, e só execute depois de combinado.
-4. Faça backup/versão antes de tocar em qualquer coisa — e **declare o PRÉ-VOO (seção 0) antes de cada mudança, inclusive ao criar/editar** (não só no deploy).
-5. Trabalhe no ambiente seguro, valide com casos reais, confirme o resultado de verdade, limpe os dados de teste.
-6. Documente o que aprendeu — inclusive as armadilhas — para a próxima sessão começar mais esperta que esta.
+3. **Cheque se a infraestrutura da disciplina existe NESTE projeto** *(adicionado 2026-06-08)*: há staging? bateria de regressão? backup/export versionado? alerta de erro e dead-man switch? Uma metodologia construída para um projeto **não vale automaticamente para o próximo** — cada projeto novo precisa herdar os mecanismos, não só as regras. Se algum mecanismo não existe, **criá-lo é prioridade zero antes de mudanças de comportamento**: regra sem trava é violada na primeira sessão longa.
+4. Apresente um plano em ondas com critério de aceite, e só execute depois de combinado.
+5. Faça backup/versão antes de tocar em qualquer coisa — e **declare o PRÉ-VOO (seção 0) antes de cada mudança, inclusive ao criar/editar** (não só no deploy).
+6. Trabalhe no ambiente seguro, valide com casos reais, confirme o resultado de verdade, limpe os dados de teste.
+7. Ao fim, **verifique a métrica de sucesso** definida antes da mudança (princípio 10) — e documente o que aprendeu, inclusive as armadilhas, para a próxima sessão começar mais esperta que esta.
 
 ---
 
