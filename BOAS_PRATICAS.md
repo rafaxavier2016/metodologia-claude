@@ -1,6 +1,6 @@
 # Boas Práticas de Trabalho — guia genérico
 
-> 📌 **PORTA DE ENTRADA ÚNICA: se só puder ler um arquivo, leia ESTE.** É completo e autossuficiente — 10 princípios + PRÉ-VOO (Seção 0) + disciplina + UX + armadilhas. (`METODOLOGIA.md` é a versão original congelada das 9 regras; este aqui é o vivo, onde acrescentamos.)
+> 📌 **PORTA DE ENTRADA ÚNICA: se só puder ler um arquivo, leia ESTE.** É completo e autossuficiente — 10 princípios + PRÉ-VOO (Seção 0) + disciplina + UX + armadilhas + economia de tokens. (`METODOLOGIA.md` é a versão original congelada das 9 regras; este aqui é o vivo, onde acrescentamos.)
 >
 > 🌐 **Endereço permanente (qualquer sessão, local ou nuvem):**
 > `https://raw.githubusercontent.com/rafaxavier2016/metodologia-claude/master/BOAS_PRATICAS.md`
@@ -121,7 +121,27 @@ Toda ferramenta tem comportamentos que só se aprende apanhando. A boa prática 
 
 ---
 
-## 5. Como uma nova sessão começa bem
+## 5. Economia de tokens (custo de LLM é custo de engenharia) *(adicionado 2026-07-02)*
+
+Todo prompt reenviado, toda camada redundante e todo histórico sem poda é dinheiro saindo em silêncio. Práticas, em ordem de impacto:
+
+1. **Prompt caching primeiro — a maior alavanca (50–90% no contexto repetido).** Regra de ouro: **estável no TOPO, variável no FIM.** Qualquer byte dinâmico no início do prompt (timestamp, nome do cliente, dado da sessão) invalida o cache de tudo que vem depois. System prompt e definições de ferramentas ficam idênticos entre chamadas; o que muda entra depois deles. Ao editar um prompt de produção, pergunte: "isso quebra o prefixo estável?"
+
+2. **Corte redundância, não clareza.** Prompt enxuto ≠ prompt telegráfico. Encurtar instruções removendo artigos e conectivos ("estilo homem das cavernas") economiza centavos e cria ambiguidade — e instrução ambígua em produção custa horas de debug e comportamento errado, muito mais caro que os tokens poupados. O desperdício real está em: camadas sobrepostas ("este bloco sobrescreve o anterior"), exemplos além do necessário e a mesma regra repetida com palavras diferentes. Consolidar isso corta 30–40% sem perder precisão. Estilo telegráfico só para dados estruturados entre sistemas (JSON, tags, logs) — nunca para instruções.
+
+3. **Janela de histórico com poda.** Conversa longa não entra inteira a cada turno: últimas N mensagens + resumo do resto. Reenviar a conversa completa faz cada turno novo repagar todos os anteriores.
+
+4. **Modelo certo por tarefa.** O spread de preço dentro do portfólio de um mesmo provedor é de 8–23x. Classificação, extração e turno trivial → modelo pequeno; raciocínio multi-passo e precisão crítica → modelo forte. Roteie por complexidade quando o volume justificar a manutenção de dois caminhos.
+
+5. **`max_tokens` definido em toda chamada.** Limite a saída ao necessário; em milhares de chamadas a diferença acumula.
+
+6. **Meça custo por unidade de negócio.** Tokens por conversa, por cliente, por execução — a resposta da API já traz `usage`; grave junto do registro da conversa. Sem isso, otimização é chute (padrão da indústria: a quase totalidade do gasto de IA fica enterrada em contas genéricas que ninguém atribui). Conecta direto com o princípio 10: custo é métrica de "depois".
+
+7. **Batch/assíncrono quando a resposta não é urgente.** APIs em lote costumam custar metade do preço para análise em massa, relatórios e reprocessamento.
+
+---
+
+## 6. Como uma nova sessão começa bem
 
 1. Leia este arquivo inteiro (boas práticas) e qualquer guia específico do projeto.
 2. Entenda o estado atual antes de propor mudança — o que já existe, o que está em produção, o que está quebrado.
