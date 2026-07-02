@@ -4,7 +4,7 @@
 >
 > 🌐 **Endereço permanente (qualquer sessão, local ou nuvem):**
 > `https://raw.githubusercontent.com/rafaxavier2016/metodologia-claude/master/BOAS_PRATICAS.md`
-> Cópia local (quando no PC principal): `Downloads\Projeto_Isabella_Core\docs\BOAS_PRATICAS.md` — mantenha as duas em sincronia ao editar.
+> Cópia local (quando no PC principal): `docs/BOAS_PRATICAS.md` do repositório principal de projetos — mantenha as duas em sincronia ao editar.
 >
 > Este é um guia de **boas práticas** para construir software com cuidado e profissionalismo — sugestões, não regras de um projeto específico. Serve para qualquer trabalho: automação, banco de dados, agentes de IA, backend, sites, apps. A ideia é simples: ler **um lugar** no começo de uma sessão e já saber como trabalhar bem, evitando retrabalho e amadorismo.
 >
