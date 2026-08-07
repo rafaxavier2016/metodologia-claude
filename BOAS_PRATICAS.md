@@ -121,6 +121,66 @@ Toda ferramenta tem comportamentos que só se aprende apanhando. A boa prática 
 
 ---
 
+- **Monitor/check tem que distinguir "medi e está ruim" de "NÃO CONSEGUI medir".** *(adicionado 2026-08-06)*
+  Caso real: o acesso ao roteador caiu por 15 min, a consulta de configuração voltou vazia e o check
+  concluiu "regra de firewall AUSENTE" — alarme falso assustador. Todo check que reporta estado a partir
+  de uma consulta precisa primeiro validar que a resposta é plausível (parece uma lista de regras? tem
+  campos esperados?); se não parecer, o resultado é "falha de coleta", nunca "estado ruim". A falha de
+  coleta também deve ficar visível (registrada/alertada) — só não pode se fantasiar de diagnóstico.
+
+- **Quem vigia o vigia: o alerta de "sistema caiu" não pode morar no sistema que cai.** *(adicionado 2026-08-06)*
+  Sondas e dead-man switches que rodam DENTRO da plataforma de automação morrem junto com ela — e o
+  silêncio parece saúde. A camada final de vigilância precisa viver em infra independente (ex.: um cron
+  no banco gerenciado, um serviço externo de heartbeat) checando um efeito observável (última linha
+  gravada) e alertando por um canal que também não dependa da plataforma vigiada.
+
+- **Cron "ativo" não é cron "executando" — e leia a expressão antes de diagnosticar.** *(adicionado 2026-08-06)*
+  Dois erros num mesmo dia: (1) um agendamento ficou com status ativo e simplesmente parou de disparar
+  (sem erro, sem log) — só o DADO gravado prova execução; desativar+reativar re-registra o gatilho.
+  (2) No sentido oposto: diagnostiquei "cron parado há 13h" sem ler a expressão — que era `*/20 18-23`
+  (só roda à noite); o silêncio era o comportamento correto, e o alerta foi falso. Regra dupla: vigie
+  pelo efeito gravado, e calibre o limiar pela CADÊNCIA REAL da expressão (limiar dinâmico quando a
+  cadência é condicional).
+
+- **Webhook que não responde vira DUPLICATA do lado de quem chamou.** *(adicionado 2026-08-07)*
+  Caso real: um nó de LOG (gravando em colunas que nem existiam) morria em silêncio DEPOIS da ação
+  executar e ANTES da resposta do webhook → quem chamou nunca recebeu o OK → re-chamou → cliente
+  recebeu a mesma coisa 2×. Regra dupla: (1) NADA entre a ação e a confirmação pode matar a cadeia
+  (proteja com "continuar em erro" + "sempre emitir saída"); (2) a resposta/ack do webhook deve rodar
+  SEMPRE. Sintoma clássico pra diagnosticar: "a ação executou, mas quem chamou repetiu".
+
+- **Guard anti-duplicata = claim atômico, e FAIL-OPEN em fluxo crítico.** *(adicionado 2026-08-07)*
+  O jeito robusto de impedir envio/ação dupla: `INSERT ... WHERE NOT EXISTS (mesma chave na janela
+  de N min) RETURNING id` numa tabela de log — a inserção É a reserva do direito de agir (atômica,
+  sem corrida). E só SUPRIMA a ação com CERTEZA de duplicata (guard rodou sem erro E não retornou
+  linha); se o guard FALHAR, deixe a ação passar — fluxo de dinheiro/atendimento não pode travar
+  porque o vigia quebrou.
+
+- **Política não se BUSCA — se INJETA (lição de RAG).** *(adicionado 2026-08-07)*
+  Busca (semântica + texto) encontra bem o conteúdo do ASSUNTO ("como emitir 2ª via"). Mas regra de
+  negócio, guard-rail e persona quase nunca se parecem com a fala do usuário — e NEGAÇÃO ("NÃO quero
+  desconto") derrota qualquer busca textual. Solução estrutural: normas entram SEMPRE no contexto
+  (injeção determinística); a busca fica só pro conteúdo topical; e o ESTADO da conversa (máquina
+  determinística) vira sinal extra de ranking. Corolário de medição: com base que tem duplicatas,
+  meça acerto por HASH do conteúdo, não por id de linha.
+
+- **Full-text "websearch" é AND — todas as palavras precisam casar.** *(adicionado 2026-08-07)*
+  "aliás, me manda meu boleto" não acha um trecho que só contém "boleto" (as outras palavras não
+  casam). Pra perna de resgate (ex.: última mensagem do usuário), OR-ifique os termos como fallback
+  quando o match estrito vier vazio — e só como fallback, porque OR com palavra genérica vira ruído.
+
+- **Teste "não rodou"? Confira gates temporais e execuções em voo ANTES de diagnosticar.** *(2026-08-07)*
+  Dois tropeços no mesmo dia: (1) teste de madrugada caiu no ramo "fora do horário comercial" e
+  pareceu que a mudança não funcionava; (2) o polling validou uma execução VELHA que tinha os mesmos
+  nós — todo poll de teste deve filtrar "id > última execução antes do disparo". Bônus: execução que
+  termina EXATAMENTE aos N minutos redondos morreu por TIMEOUT de execução, não por intervenção.
+
+- **Credencial não viaja entre instâncias — e key copiada de lista vem truncada.** *(2026-08-07)*
+  Cofres de credencial são criptografados e ilegíveis de volta (por desenho). Pra renovar em outra
+  instância, o DONO roda um script com digitação oculta (getpass) que valida a colagem antes de criar:
+  detectar mascaramento (`...`/`*`), colagem duplicada e tamanho anômalo — painéis de API mostram a
+  key CORTADA na listagem, e é exatamente assim que nasce uma "key inválida" em produção.
+
 ## 5. Economia de tokens (custo de LLM é custo de engenharia) *(adicionado 2026-07-02)*
 
 Todo prompt reenviado, toda camada redundante e todo histórico sem poda é dinheiro saindo em silêncio. Práticas, em ordem de impacto:
