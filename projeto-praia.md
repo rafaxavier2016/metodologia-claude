@@ -11,6 +11,10 @@ Em fase de análise. Este arquivo registra **apenas o que já foi decidido** —
 ### Viajantes
 - Casal, sem crianças (Joy + 1).
 
+### Data
+- **1 a 7 de outubro de 2026** — 6 noites. Chegada quinta, saída quarta.
+- Outubro é o **último mês da temporada de baleias** (jul–out).
+
 ### Perfil da viagem
 - **Resort-first**: a maior parte do tempo dentro do resort.
 - **2 a 3 passeios externos**, todos de **meio período** — nada de bate-volta que consuma o dia inteiro.
@@ -48,6 +52,28 @@ Em fase de análise. Este arquivo registra **apenas o que já foi decidido** —
 O Projeto Tamar abre às **11h** e fecha segunda-feira. Se ele for a âncora do dia em
 Praia do Forte, o passeio deixa de ser "de manhã cedo" — melhor sair do resort mais
 tarde e emendar Tamar + vila + castelo.
+
+### Proposta dia a dia
+
+| Dia | Programa |
+|---|---|
+| **Qui 1/10** | Chegada. Transfer do aeroporto (~1h–1h15). **Reservar na recepção: os 3 à la carte + spa.** Localizar a piscina adulto |
+| **Sex 2/10** | **Baleias**, 8h–12h. Tarde de resort |
+| **Sáb 3/10** | Resort. *Reserva para as baleias, se sexta cair por mar agitado* |
+| **Dom 4/10** | **Massarandupió**, meio período |
+| **Seg 5/10** | Resort e spa. Tamar fecha segunda, então é o dia certo para ficar. Rio Imbassaí no fim da tarde (opcional) |
+| **Ter 6/10** | **Praia do Forte**, à tarde. Tamar (abre 11h) + vila + castelo |
+| **Qua 7/10** | Saída |
+
+Três passeios externos em 5 dias cheios, com o rio como extra sem agendamento.
+O buggy fica de fora — é o mais caro por pessoa e o que menos acrescenta.
+
+### Riscos da data
+
+- **Baleias no limite da temporada.** Outubro fecha o ciclo; o avistamento é menos
+  consistente que em agosto/setembro. Por isso está no **primeiro dia cheio**, com
+  sábado livre como reserva. Confirmar com a operadora se ainda está saindo.
+- Segunda-feira (5/10) tem o Tamar fechado — já contornado no roteiro acima.
 
 ## Perguntas para o resort
 
@@ -99,7 +125,17 @@ Referências enviadas por foto (imagens **não** versionadas neste repositório)
 - **Tecidos:** liso matte e texturizado (tipo renda/jacquard).
 - **Saída de praia:** vestido de tule/mesh preto, manga longa, transparente.
 
+### Prazo de compra (viagem em 1/10)
+
+- **Peça-teste de loja especializada: comprar já.** Confirma a modelagem antes do
+  pedido grande. É o que evita comprar 5 peças que não servem.
+- **Shein com envio internacional (10–25 dias úteis): pedir até ~20/08.** Depois disso
+  o prazo fica arriscado.
+- **Shein com envio nacional (5–15 dias úteis) e lojas brasileiras: até meados de
+  setembro.**
+- Manter cada pedido internacional **abaixo de US$ 50** (imposto federal zerado desde
+  a MP 1.357/2026; ICMS de 17–20% continua). Se passar, dividir em dois pedidos.
+
 ### Pendências
 - Tamanhos masculinos e preferência (sunga / short curto / bermuda).
 - Faixa de preço.
-- Comprar online antes da viagem ou no destino.
