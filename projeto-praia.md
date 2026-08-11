@@ -49,6 +49,42 @@ O Projeto Tamar abre às **11h** e fecha segunda-feira. Se ele for a âncora do 
 Praia do Forte, o passeio deixa de ser "de manhã cedo" — melhor sair do resort mais
 tarde e emendar Tamar + vila + castelo.
 
+## Perguntas para o resort
+
+### Antes de viajar (WhatsApp / e-mail)
+
+1. Há restrição de traje nas áreas de piscina e praia?
+2. Qual é exatamente o dress code dos restaurantes à la carte no jantar?
+3. Vocês operam transfer para Massarandupió? Qual o valor e como está a estrada de terra?
+4. O passeio de observação de baleias está operando na data da nossa estadia?
+
+### Na chegada — fazer antes de qualquer outra coisa
+
+5. Quero reservar **os três restaurantes à la carte de uma vez**, para as noites da
+   estadia. Quais datas ainda têm vaga?
+6. Quero agendar **massagem de casal no Zentropia**. Quais horários estão livres?
+7. Onde fica a **piscina exclusiva para adultos** e qual o horário dela?
+
+### Passeios — preço e logística
+
+8. Baleias: valor por pessoa, dias e horário de saída, transfer incluído, e **qual a
+   política se o mar não permitir sair?**
+9. Praia do Forte: valor do transfer, horário de ida e volta. (Lembrar: **Tamar abre
+   11h e fecha segunda**.)
+10. Buggy ou jipe: existe opção **compartilhada** ou só privativo? Valor de cada.
+11. Rio Imbassaí: canoa / stand-up / jangada estão **inclusos no all-inclusive** ou são
+    à parte? Onde alugar?
+12. Massarandupió: tempo real de deslocamento e se o carro do transfer encara a
+    estrada de terra.
+
+### Operacional
+
+13. **Tábua de marés da semana** — qual o melhor dia para as piscinas naturais de
+    Praia do Forte?
+14. Os passeios externos aceitam **cartão** ou é só dinheiro em espécie?
+15. O que **não** está incluso no all-inclusive (bebidas premium, serviços do spa)?
+16. Programação da semana: shows noturnos e atividades.
+
 ## Compras / enxoval de praia
 
 ### Perfil de estilo — Joy (tamanho M)
