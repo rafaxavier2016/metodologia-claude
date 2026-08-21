@@ -171,3 +171,158 @@
 Escolher 1 ideia, rodar como serviço concierge por 30 dias com meta de 10 pagantes,
 e só então decidir se vira produto. As ideias 1 e 3 são as de menor distância da
 stack atual (n8n + IA + WhatsApp).
+
+---
+
+# Segunda leva (21/08/2026) — 10 ideias novas
+
+## 11. Financeiro de casal
+
+- **Dor**: dinheiro é a maior causa de briga de casal. Contas divididas em planilha
+  torta, "quem pagou o mercado?", um gasta escondido do outro.
+- **O quê**: espaço financeiro compartilhado sem juntar contas: cada um conecta o
+  seu banco, o app separa o que é "nosso" do que é "meu", faz o acerto do mês
+  automaticamente (via Pix) e dá visão de metas conjuntas (viagem, entrada do apê).
+- **Por que agora**: Open Finance maduro no Brasil torna a leitura multi-banco
+  trivial; IA categoriza e arbitra ("isso é do casal ou seu?") com precisão.
+- **Como estoura**: aquisição vem em dupla por definição — cada usuário traz outro.
+  Momentos de vida (morar junto, casar) são gatilhos buscáveis.
+- **MVP barato**: começa sem Open Finance — foto do extrato/comprovante + acerto
+  mensal assistido.
+
+## 12. Carteira de saúde da família
+
+- **Dor**: exames em PDF espalhados por e-mail, ninguém entende o laudo, e o médico
+  tem 8 minutos de consulta. Histórico da família (pais idosos, filhos) é caos.
+- **O quê**: guarda todos os exames/laudos/receitas da família → traduz para
+  linguagem leiga, monta linha do tempo (colesterol nos últimos 5 anos), prepara a
+  lista de perguntas para a próxima consulta e alerta tendências.
+- **Por que agora**: LLMs leem laudo e exame com qualidade clínica de apoio (sem
+  diagnosticar — organizar e explicar); a dor cresceu com telemedicina fragmentada.
+- **Como estoura**: quem cuida da saúde da família (geralmente uma pessoa) adota
+  para todos os membros — cada conta puxa 3-5 perfis. Mídia adora a pauta.
+- **MVP barato**: fluxo por WhatsApp (manda o PDF do exame, recebe a explicação).
+  Cuidado regulatório: posicionar como organização/educação, nunca diagnóstico.
+
+## 13. Pechincheiro — agente de compras pessoal
+
+- **Dor**: brasileiro pesquisa preço em 5 sites, caça cupom, espera promoção e ainda
+  paga caro. Cashback e cupom são um jogo de quem tem paciência.
+- **O quê**: você diz o que quer ("tênis de corrida até R$ 300") → o agente monitora
+  preços, aplica cupons, cruza cashback e avisa (ou compra) na hora certa. Também
+  audita: "isso que você vai comprar está R$ 40 mais barato em tal lugar".
+- **Por que agora**: agentes navegam sites de varejo de forma confiável; APIs de
+  afiliados pagam a conta — o app pode ser grátis para o usuário.
+- **Como estoura**: print de economia é viral; Black Friday é pico anual de aquisição
+  gratuita. Monetiza por afiliado/cashback, incentivo alinhado.
+- **MVP barato**: uma categoria (eletrônicos) + alerta por WhatsApp.
+
+## 14. Advogado de bolso do consumidor
+
+- **Dor**: voo cancelado, produto que não chegou, cobrança indevida, plano de saúde
+  negando exame. O consumidor tem direito e não exerce porque a briga é exaustiva.
+- **O quê**: descreve o problema (ou manda os prints) → o agente monta o caso, abre
+  reclamação no canal certo (SAC, consumidor.gov.br, Procon), redige tudo, acompanha
+  prazos e escala até proposta de acordo. Se precisar de Juizado, prepara o kit.
+- **Por que agora**: agentes executam o processo burocrático de ponta a ponta;
+  jurisprudência de consumo é padronizada o suficiente para automação segura.
+- **Como estoura**: cada vitória ("recebi R$ 1.400 da companhia aérea sem advogado")
+  é uma história contada. Modelo de % sobre o que recuperar alinha incentivo.
+- **MVP barato**: nicho único com dano tabelado — voos atrasados/cancelados — onde o
+  processo é quase mecânico.
+
+## 15. Otimizador de conta de luz
+
+- **Dor**: todo mundo acha a conta de luz cara e ninguém sabe o que fazer além de
+  desligar o ar-condicionado.
+- **O quê**: foto da conta → o agente audita (bandeira, tributos, erros de leitura),
+  simula alternativas (mercado livre de energia, assinatura de energia solar por
+  cooperativa, mudança de modalidade tarifária) e executa a troca por você.
+- **Por que agora**: a abertura do mercado livre de energia está descendo para
+  consumidores cada vez menores no Brasil, e quase ninguém entende como aproveitar —
+  janela clássica de "serviço de troca" (como foi comparador de seguro no Reino Unido).
+- **Como estoura**: "reduzi 18% da conta de luz sem instalar nada" se espalha
+  sozinho. Monetiza por comissão da geradora/cooperativa — grátis para o usuário.
+- **MVP barato**: auditoria da conta por WhatsApp + parceria com 1 cooperativa solar.
+
+## 16. Agente do inquilino
+
+- **Dor**: alugar imóvel é humilhante: caçar anúncio duplicado, visitar 10 imóveis
+  ruins, contrato leonino, vistoria de entrada mal feita que vira briga na saída.
+- **O quê**: o agente caça imóveis pelos seus critérios em todos os portais, agenda
+  visitas, analisa o contrato (cláusulas abusivas), negocia o valor com dados da
+  região e documenta a vistoria com fotos organizadas e laudo.
+- **Por que agora**: agentes cruzam portais e leem contratos; o mercado de aluguel
+  está aquecido e o lado do inquilino nunca teve ferramenta — tudo serve o dono.
+- **Como estoura**: geração que aluga é digital e indica em grupo de amigos. Cobra
+  taxa única por contratação fechada (fração do que uma imobiliária cobra do dono).
+- **MVP barato**: análise de contrato + kit de vistoria como produtos avulsos.
+
+## 17. GPS do SUS
+
+- **Dor**: navegar o sistema público de saúde é um labirinto: onde marcar, que
+  documento levar, quanto tempo de fila, que UBS tem a vacina, como conseguir o
+  medicamento de alto custo.
+- **O quê**: assistente que conhece o caminho: te diz o passo a passo do seu caso,
+  os documentos, a unidade certa, acompanha sua posição na fila de regulação e avisa
+  quando algo anda. Lembra exames de rotina e vacinas da família.
+- **Por que agora**: dados públicos de saúde cada vez mais abertos + IA para
+  transformar burocracia em passo a passo. Ninguém fez o "Waze" desse labirinto.
+- **Como estoura**: 7 em cada 10 brasileiros dependem do SUS. Distribuição via
+  boca a boca em comunidade é natural. Monetização: B2B (empregadores, planos
+  populares, prefeituras) — o usuário final não paga.
+- **MVP barato**: uma cidade, um fluxo (ex.: consulta com especialista via
+  regulação) dominado de ponta a ponta.
+
+## 18. Aposta em você mesmo
+
+- **Dor**: o Brasil virou o país das bets — dinheiro do salário indo embora em
+  aposta. A mecânica (risco, recompensa, dopamina) é viciante; o objeto é ruim.
+- **O quê**: vira o jogo: você "aposta" em metas próprias (correr 3x/semana,
+  guardar R$ 200/mês, estudar 20h). Cumpriu, resgata com rendimento + prêmios do
+  pote de quem falhou. Falhou, o valor vai para o pote (ou para caridade, você
+  escolhe). Compromisso com dinheiro na mesa funciona — é ciência comportamental.
+- **Por que agora**: a discussão nacional anti-bet abre espaço para o contraponto;
+  verificação de meta por IA (foto, integração com apps de treino/banco) elimina a
+  fraude que matava essa ideia antes.
+- **Como estoura**: desafios em grupo ("nossa turma apostou que vai treinar até
+  dezembro") são virais e sociais por natureza. Pauta de mídia garantida.
+- **MVP barato**: desafios em grupo com Pix manual e verificação por foto no
+  WhatsApp. Atenção regulatória: estruturar como poupança/compromisso, não aposta.
+
+## 19. Vendedor que nunca dorme (B2B)
+
+- **Dor**: pequeno comércio perde venda todo dia: cliente chama no WhatsApp às 22h,
+  ninguém responde, ele compra do concorrente. Dono não tem equipe de atendimento.
+- **O quê**: agente de vendas no WhatsApp do comércio: conhece o catálogo e o
+  estoque, responde em segundos, tira dúvida, monta o pedido, cobra via Pix e passa
+  para o humano só o que precisa. Relatório diário do que vendeu e do que perdeu.
+- **Por que agora**: agentes com tool use confiável + catálogo estruturado; o dono
+  de comércio já entendeu que atendimento lento = venda perdida.
+- **Como estoura**: B2B por resultado ("te entrego X vendas recuperadas/mês").
+  Cada comércio atendido é vitrine para os vizinhos do bairro. É também o produto
+  mais próximo do meu trabalho atual de freelance — dá para vender já.
+- **MVP barato**: n8n + WhatsApp API + catálogo em planilha. Primeiro cliente em
+  uma semana.
+
+## 20. Histórias do vovô
+
+- **Dor**: quando os avós morrem, as histórias morrem junto. Todo mundo "sempre
+  quis gravar" e nunca grava.
+- **O quê**: a IA liga (ou conversa por áudio no WhatsApp) semanalmente com o avô/avó,
+  puxa histórias com perguntas boas ("como a senhora conheceu o vovô?"), e transforma
+  o acervo em livro impresso, podcast da família ou memorial com a própria voz.
+- **Por que agora**: voz natural + longa memória de conversa tornam a "entrevista
+  semanal infinita" possível; clonagem de voz (com consentimento) permite o memorial.
+- **Como estoura**: é O presente de Dia das Mães/Pais/80 anos — compra emocional,
+  giftável, com pico sazonal. Cada livro impresso circula na família inteira (20+
+  pessoas veem o produto).
+- **MVP barato**: entrevistas por WhatsApp + diagramação assistida por IA + gráfica
+  sob demanda. Margem de produto físico premium.
+
+## Onde estas se encaixam na tese do "agente pessoal"
+
+As ideias 13, 14, 15 e 16 são "cabeças" alternativas do mesmo agente que executa
+burocracia (tese da seção anterior). A 19 é a versão B2B da mesma tecnologia — e a
+de caixa mais rápido. A 18 e a 20 são apostas de produto independentes, com
+mecânica emocional/social própria.
