@@ -326,3 +326,125 @@ As ideias 13, 14, 15 e 16 são "cabeças" alternativas do mesmo agente que execu
 burocracia (tese da seção anterior). A 19 é a versão B2B da mesma tecnologia — e a
 de caixa mais rápido. A 18 e a 20 são apostas de produto independentes, com
 mecânica emocional/social própria.
+
+---
+
+# Terceira leva (21/08/2026) — mercado de tecnologia (dev tools e infra de IA)
+
+> Por que esse mercado "daria": o comprador é técnico (decide rápido, paga em dólar,
+> compra self-service sem reunião), a distribuição é por conteúdo/comunidade (barata),
+> e eu sou o próprio público-alvo — conheço a dor de dentro. O risco é ser um mercado
+> global e competitivo: a defesa é nicho + velocidade.
+
+## 21. Resgate de app "vibe-coded"
+
+- **Dor**: a explosão de gente não-técnica criando apps com IA gerou uma geração de
+  apps que funcionam na demo e quebram na vida real: sem segurança (chaves expostas,
+  banco aberto), sem backup, sem deploy decente, sem manutenção.
+- **O quê**: serviço/produto que audita o app gerado por IA (segurança, custo,
+  escalabilidade), corrige o crítico e assume a manutenção por assinatura. "O adulto
+  na sala do seu app feito com IA."
+- **Por que agora**: 2025-2026 é o pico do vibe coding; a onda de incidentes
+  (vazamento, conta de cloud surpresa) está começando — a dor vai explodir junto.
+- **Como estoura**: cada história de terror pública ("meu app vazou os dados") é
+  marketing gratuito. SEO em cima de "app lovable/bolt/v0 problema X".
+- **MVP barato**: auditoria automatizada como isca (relatório gratuito) + correção
+  e assinatura de manutenção como produto. Dá para operar solo desde a semana 1.
+
+## 22. CI/CD de prompts e agentes
+
+- **Dor**: todo time que coloca LLM em produção descobre que mudar um prompt é
+  deploy sem teste: quebrou o formato do JSON, o agente parou de chamar a tool, o
+  custo dobrou — e ninguém percebe até o cliente reclamar.
+- **O quê**: "esteira de testes" para IA: test sets versionados, avaliação automática
+  a cada mudança de prompt/modelo (formato, tool calling, qualidade, custo,
+  latência), diff entre versões e bloqueio de regressão antes do deploy.
+- **Por que agora**: a massa de agentes em produção cruzou o ponto em que "testar no
+  olho" não escala; os frameworks de eval existentes são para dev hardcore, não para
+  quem constrói em n8n/Make/Zapier.
+- **Como estoura**: foco no nicho low-code (n8n primeiro): plugin/node nativo,
+  templates de test set por caso de uso, conteúdo em comunidade. É literalmente o
+  meu skill agent-eval virando produto.
+- **MVP barato**: já tenho os scripts — falta empacotar como serviço web + node n8n.
+
+## 23. Gerador de MCP server (qualquer sistema vira tool de IA)
+
+- **Dor**: toda empresa quer que a IA acesse seus sistemas internos (ERP antigo,
+  API interna, banco), mas transformar isso em tools seguras para agentes exige dev
+  especializado.
+- **O quê**: aponta para uma API (OpenAPI/Swagger, ou até só a documentação) → gera
+  um MCP server pronto, com autenticação, permissões por tool, rate limit e log de
+  auditoria. "Zapier da era dos agentes."
+- **Por que agora**: MCP virou o padrão de conexão de agentes a sistemas; a demanda
+  por "conectar a IA no meu sistema" cresce mais rápido que a oferta de quem sabe
+  fazer.
+- **Como estoura**: cauda longa de sistemas legados que ninguém vai integrar à mão.
+  Modelo: gratuito para APIs públicas, pago para privadas/self-hosted.
+- **MVP barato**: gerador para 1 formato (OpenAPI → MCP) como ferramenta CLI/web.
+
+## 24. Caixa de aprovação humana para agentes (human-in-the-loop como serviço)
+
+- **Dor**: agentes em produção precisam de aprovação humana nos passos críticos
+  (enviar e-mail ao cliente, dar desconto, pagar boleto) — e cada time reinventa
+  isso com gambiarras de Slack/WhatsApp.
+- **O quê**: um "inbox de aprovações" plugável: o agente pausa, a pessoa aprova/
+  edita/rejeita pelo celular com contexto completo, o fluxo continua. Com trilha de
+  auditoria, SLA, escalonamento e regras ("acima de R$ X, aprovação dupla").
+- **Por que agora**: a primeira onda de "agente 100% autônomo" frustrou; o padrão
+  vencedor em 2026 é autonomia com checkpoints — e não existe um padrão de mercado
+  para o checkpoint.
+- **Como estoura**: nodes prontos para n8n/Make/LangChain viram distribuição; quem
+  adota nunca mais tira (vira infraestrutura de compliance).
+- **MVP barato**: node n8n + inbox web simples. Sou usuário zero.
+
+## 25. FinOps de LLM para quem constrói com low-code
+
+- **Dor**: a conta de API de IA cresce sem ninguém saber qual workflow, cliente ou
+  prompt está queimando dinheiro. Em agência/freelance, sem isso não dá nem para
+  precificar o cliente direito.
+- **O quê**: painel que rastreia custo por workflow, por cliente e por modelo, alerta
+  anomalias ("esse fluxo custou 4x mais hoje") e sugere/executa troca de modelo onde
+  a qualidade não cai (router de custo).
+- **Por que agora**: multi-provider virou norma (Claude + GPT + Gemini + local);
+  o custo virou a segunda maior objeção de projeto de IA, atrás só de confiabilidade.
+- **Como estoura**: "descobri que 60% do meu custo era um loop esquecido" é o print
+  que circula em toda comunidade de automação. Preço por % de economia ou assinatura.
+- **MVP barato**: proxy de API + dashboard. Meu skill llm-migration é metade disso.
+
+## 26. Loja de automações prontas (produtizar o freelance)
+
+- **Dor**: toda PME quer "o orçamento que responde sozinho" ou "a cobrança
+  automática", mas projeto custom custa caro; todo freelancer refaz o mesmo fluxo
+  em cada cliente.
+- **O quê**: catálogo de automações empacotadas por nicho (clínica, imobiliária,
+  e-commerce): instala em minutos no n8n do cliente (ou hospedado), configura por
+  formulário, atualiza como app. Freelancers revendem e ganham comissão.
+- **Por que agora**: n8n explodiu em adoção; existe template gratuito de sobra mas
+  quase nada "instalável por leigo com suporte" — o gap é empacotamento, não código.
+- **Como estoura**: efeito marketplace duplo: criadores publicam (renda passiva),
+  agências revendem. Começa como loja própria, vira plataforma.
+- **MVP barato**: 3 automações do meu próprio portfólio, empacotadas, com página de
+  venda. Valida com o que eu já entrego em consultoria.
+
+## 27. Contratar um agente, não uma pessoa (marketplace de trabalho feito por IA)
+
+- **Dor**: PME precisa de "alguém que responda meu Instagram", "alguém que faça
+  minha conciliação" — mas não quer contratar nem aprender ferramenta nenhuma.
+- **O quê**: marketplace onde se contrata o resultado: "agente social media",
+  "agente de cobrança", "agente de conciliação" — com preço mensal fixo, SLA e
+  operador humano supervisionando por trás (centauro: IA faz, humano garante).
+- **Por que agora**: a tecnologia dos agentes está pronta para 80% dessas tarefas;
+  o que falta é a embalagem comercial que a PME entende — "contratei alguém".
+- **Como estoura**: é a versão B2B em escala do que já vendo como freelancer. Cada
+  vertical que funciona vira um "cargo" novo no catálogo. Potencial de ser a maior
+  ideia das três levas — e a mais pesada de operar.
+- **MVP barato**: um "cargo" só (ex.: agente de cobrança para clínicas), 5 clientes,
+  eu como operador humano. Se a unidade economics fechar, escala.
+
+## Qual eu escolheria no mercado tech
+
+Caminho de menor risco e maior sinergia: **22 (CI de prompts) ou 24 (caixa de
+aprovação)** — ambos nascem de skills que já tenho, vendem para a comunidade onde
+já estou, e são infraestrutura (retenção alta). O **21 (resgate de vibe-coded)** é
+o de caixa mais rápido como serviço. O **27** é a aposta grande — melhor chegar
+nela depois de validar 26.
