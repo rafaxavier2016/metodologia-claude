@@ -181,6 +181,15 @@ Toda ferramenta tem comportamentos que só se aprende apanhando. A boa prática 
   detectar mascaramento (`...`/`*`), colagem duplicada e tamanho anômalo — painéis de API mostram a
   key CORTADA na listagem, e é exatamente assim que nasce uma "key inválida" em produção.
 
+- **Teste de staging só vale com o ESTADO DE DADOS de produção.** *(adicionado 2026-08-26)*
+  Caso real: fix testado no staging com a tabela de controle VAZIA (1 item = fluxo normal); em
+  produção a mesma tabela tinha 23 linhas e um passo que executa "uma vez por item de entrada"
+  multiplicou tudo — 8 clientes receberam 23 cópias da mesma cobrança. Agravante: o estado foi
+  populado DEPOIS do teste, criando exatamente a condição não testada. Regra dupla: (1) antes de
+  promover, pergunte "que estado de dados a produção terá na PRIMEIRA execução?" e rode o teste
+  com esse estado; (2) qualquer mudança de estado feita APOS o teste (popular tabela, migrar
+  dados) exige RE-testar — o teste antigo não vale mais.
+
 ## 5. Economia de tokens (custo de LLM é custo de engenharia) *(adicionado 2026-07-02)*
 
 Todo prompt reenviado, toda camada redundante e todo histórico sem poda é dinheiro saindo em silêncio. Práticas, em ordem de impacto:
