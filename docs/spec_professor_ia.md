@@ -3,6 +3,9 @@
 > **Status: v3, RASCUNHO PARA APROVAÇÃO.** Nenhum código antes do ok do dono (regra 2).
 > Data: 30/09/2026 · Fase: pessoal (1 aluno). Fase comercial: seção 16, só direção.
 >
+> **v3.2:** termômetro de ritmo e previsão em horas (seção 9.1) e decisão 10. Tempo volta
+> como MEDIDA (entrada da previsão), nunca como meta.
+>
 > **v3.1:** arquitetura motor/matéria (seção 7.1) e decisão 9.
 >
 > **v3 em relação à v2:** objetivos do dono viram o ponto de partida (desenho reverso);
@@ -25,6 +28,7 @@
 | Entender a lógica, não só usar | bloco "lógica" sempre antes de "prática" (seção 7) |
 | Imagens de apps, páginas, ícones, formatação | regra de imagens por prioridade (seção 7.2) |
 | Medir conhecimento, não tempo, de 1 a 10 | escala por evidência (seção 6) |
+| Ver sempre um termômetro: ritmo por assunto e horas que faltam | termômetro de ritmo (seção 9.1) |
 | Fontes legítimas, atuais, em inglês; aula em português com termo + tradução | lista branca mecânica; glossário (seção 10) |
 | Estudar no Claude Code, de qualquer aparelho | estado em Git; celular é teste de aceite (seção 14) |
 
@@ -122,6 +126,8 @@ PASSO = 1 ideia = 1 visual + legenda de até 3 linhas + 1 checagem de memória
 ### 5.2 O ritmo de toda aula
 
 ```
+abrir: mapa + TERMÔMETRO (onde estou, ritmo, horas que faltam)
+   ↓
 revisar (2 min, de memória, tópicos sorteados entre os vencidos)
    ↓
 passo → checo → passo → checo → passo → checo
@@ -130,7 +136,7 @@ CABEÇA EM ORDEM · 1 diagrama-resumo + você diz em 1 frase o que viu
    ↓
 passo → checo → ...  → cabeça em ordem
    ↓
-fechar: resumo visual da aula + "a próxima é X, porque hoje você viu Y"
+fechar: resumo visual da aula + TERMÔMETRO atualizado + "a próxima é X, porque hoje você viu Y"
 ```
 
 "Cabeça em ordem" acontece a cada 3 a 5 passos e ao fim de cada bloco. É template.
@@ -260,6 +266,54 @@ Tangente com mais de 3 trocas: professor oferece estacionar e voltar. O script c
 Sinais auxiliares: perguntas por tópico, "de outro jeito". Desligado por padrão: passo
 longo fechado em segundos dispara checagem extra (não vira nota).
 
+### 9.1 Termômetro: ritmo por assunto e previsão em horas
+
+O dono quer ver sempre quanto falta, **no ritmo dele**. O termômetro é cálculo do script,
+mostrado na abertura e no fechamento de toda sessão. Prevê; não cobra. Nunca vira meta.
+
+**Como aparece (chat e página):**
+
+```
+🌡️ A3 · tokens          nível 4 → 7        ~3 h no seu ritmo
+🌡️ Trilha A · Entender  9 de 10 tópicos    ~22 h
+🌡️ Tudo (O1 a O5)       nível geral 3,4    ~80 h  (faixa 65 a 100)
+   ritmo: 1,4 nível/h em A · ↑ acelerando · previsão com 6 sessões de dado
+```
+
+**O que mede (tudo automático, sem o aluno preencher):**
+
+| Medida | Como é capturada |
+|---|---|
+| Tempo real de estudo por tópico | carimbo de hora de cada passo aberto e cada checagem respondida; pausa > 10 min não conta |
+| Níveis ganhos por tópico e por trilha | já está no estado |
+| Retrabalho | revisões falhadas e "de outro jeito" (aumentam a previsão) |
+
+**Como calcula (regra fixa, com testes):**
+
+1. **Esforço-base por tópico** vem da matéria (`mapa.md`: horas estimadas de 1 → 7 para
+   um aluno sem dado ainda). É o chute inicial, honesto e rotulado como tal.
+2. **Ritmo observado** por trilha = níveis ganhos por hora nas últimas 5 sessões daquela
+   trilha (média móvel). Por trilha, porque programar e entender IA têm ritmos diferentes.
+3. **Mistura** = quanto mais sessões, mais peso o ritmo observado ganha sobre o
+   esforço-base (0 sessões: 100% base; 5 ou mais: 80% observado). Sem salto brusco.
+4. **Falta por tópico** = (nível-alvo − nível atual) ÷ ritmo da trilha × (1 + taxa de
+   retrabalho). Alvo padrão: 7 (aplica). Tópicos de projeto: 9.
+5. **Falta total** = soma dos tópicos que ainda não atingiram o alvo + 15% de revisão
+   espaçada + esforço dos projetos O2 a O5.
+6. **Faixa** = previsão ± incerteza; a incerteza estreita com o número de sessões
+   (menos de 3 sessões na trilha: rótulo "estimativa inicial, ainda sem dado seu").
+7. **Tendência** = ritmo das últimas 5 sessões vs. as 5 anteriores: acelerando, estável,
+   desacelerando. Só informa.
+
+**Regras de honestidade:** sempre faixa, nunca só o número; sempre diz com quantas sessões
+de dado foi feita; recalcula toda sessão; nunca aparece como cobrança ("você está atrasado"
+não existe no vocabulário do professor). Se o aluno passar 14 dias sem estudar, a
+previsão em horas não muda (horas são de estudo, não de calendário).
+
+**Estado que isso exige:** `estado/ia/sessoes.jsonl` (uma linha por sessão: data, tópico,
+minutos medidos, níveis antes e depois, revisões acertadas e falhadas) e
+`esforco_base_horas` em cada tópico do `mapa.md`.
+
 ## 10. Radar de avanços
 
 - **Cadência:** coleta no início de cada sessão ("desde o último radar") + rotina semanal
@@ -363,7 +417,8 @@ flowchart TD
 
 Nível geral e por trilha · retenção em revisão · exercícios verificados · cobertura
 (tópicos ≥ 5) · atualizações absorvidas (classe A que virou revisão acertada) · progresso
-rumo a cada evidência final O1 a O5.
+rumo a cada evidência final O1 a O5 · **termômetro**: ritmo por trilha e horas que faltam
+(faixa), por tópico, por trilha e total.
 
 Marcos de leitura: nível 5 = base sólida; 7 = constrói sozinho; 9 = ensina outros.
 
@@ -377,7 +432,9 @@ fontes, imagem com dado sensível.
 2. **Regressão** `test_professor.py`: próximo tópico por pré-requisito; sobe 1 por sessão;
    desce por revisão; bloqueio por perguntas; classes de pergunta; contagem de trocas;
    cabeça em ordem a cada 3 a 5 passos; classes do radar; merge de branch; validador de
-   fontes (boa, ruim, subdomínio falso, prefixo). **3x verde** antes de promover.
+   fontes (boa, ruim, subdomínio falso, prefixo); termômetro (0 sessões = base; mistura
+   por número de sessões; pausa > 10 min descartada; faixa estreita com dados; retrabalho
+   aumenta previsão). **3x verde** antes de promover.
 3. **Paridade:** teste com cópia do `progresso.json` real.
 4. **Canário:** primeira sessão real da versão nova é só revisão, com o dono olhando o diff.
 5. **Reversão:** Git, commit por sessão.
@@ -388,8 +445,8 @@ fontes, imagem com dado sensível.
 
 | Onda | Entrega | Aceite |
 |---|---|---|
-| 1 · Fundação | repo `professor-ia` com `motor/` e `materias/ia/` separados; mapa (seção 3) em arquivo; banco de diagnóstico (3 perguntas por trilha por nível); `professor.py` + testes; skill com `diagnostico`, `aula`, `curto` (texto, sem imagens) | diagnóstico real feito; `progresso.json` gerado; sessão no PC e a seguinte no celular com estado igual. **Falhou → Supabase na fase pessoal** |
-| 2 · Aula completa e o fio | template de passo e ritmo; `aula.json` + `aula.html`; imagens por prioridade; rubrica; cursor; classificação; retomada; estacionamento; glossário | 3 aulas reais; 5+ perguntas no meio com retomada e o dono confirmando que não perdeu o fio; 1 revisão cobrada; aula legível no celular |
+| 1 · Fundação | repo `professor-ia` com `motor/` e `materias/ia/` separados; mapa (seção 3) em arquivo; banco de diagnóstico (3 perguntas por trilha por nível); `professor.py` + testes; skill com `diagnostico`, `aula`, `curto` (texto, sem imagens); termômetro v1 (esforço-base + minutos medidos, faixa larga) | diagnóstico real feito; `progresso.json` gerado; sessão no PC e a seguinte no celular com estado igual. **Falhou → Supabase na fase pessoal** |
+| 2 · Aula completa e o fio | template de passo e ritmo; `aula.json` + `aula.html`; imagens por prioridade; rubrica; cursor; classificação; retomada; estacionamento; glossário; termômetro v2 (ritmo observado, tendência, faixa que estreita) | 3 aulas reais; 5+ perguntas no meio com retomada e o dono confirmando que não perdeu o fio; 1 revisão cobrada; aula legível no celular |
 | 3 · Radar e vigilância | coleta por sessão e semanal; classes; CHANGELOG; lembrete | radar real só com lista branca; 1 item A virou bloco e revisão; lembrete disparou em teste |
 | 4 · Comercial (fora do escopo) | Supabase multiusuário, web ou WhatsApp, custo por aluno | |
 
@@ -411,3 +468,5 @@ de API (assinatura do Claude Code). Rotina semanal: uma sessão curta por semana
 8. Radar: por sessão + semanal, classes A/A'/B/C/D, lista branca da seção 10.
 9. Motor separado da matéria desde a onda 1 (seção 7.1): a skill e os scripts não
    sabem nada de IA; todo conteúdo mora em `materias/ia/`. Não é app nesta fase.
+10. Termômetro (seção 9.1): tempo medido automaticamente como entrada da previsão, nunca
+    como meta; sempre em faixa; alvo padrão nível 7; mostrado na abertura e no fechamento.
