@@ -3,6 +3,8 @@
 > **Status: v3, RASCUNHO PARA APROVAÇÃO.** Nenhum código antes do ok do dono (regra 2).
 > Data: 30/09/2026 · Fase: pessoal (1 aluno). Fase comercial: seção 16, só direção.
 >
+> **v3.1:** arquitetura motor/matéria (seção 7.1) e decisão 9.
+>
 > **v3 em relação à v2:** objetivos do dono viram o ponto de partida (desenho reverso);
 > mapa de 4 trilhas + eixo transversal; cronograma por dependência e contagem, não por
 > data; estrutura de ensino baseada em evidência (passo, ritmo, "cabeça em ordem");
@@ -177,18 +179,46 @@ Três blocos, nesta ordem, cada um feito de passos:
 | **Prática** | como aparece na tela | checagem objetiva + "aponte na imagem" | 3 e 4 |
 | **Exercício** | você consegue fazer | verificação pelo resultado, com item do eixo E | 7 e 8 |
 
-### 7.1 Uma pasta por tópico
+### 7.1 Arquitetura: motor separado da matéria (reaproveitável pra qualquer assunto)
+
+Não é um app nesta fase. É uma **skill do Claude Code** num repositório privado: instruções
++ scripts + arquivos de estado + aulas em HTML. Sem servidor, sem instalação, sem custo
+além da assinatura. O app é a onda 4 (e o projeto-síntese O5).
+
+O que **não muda** de assunto pra assunto é o **motor**. O que muda é o **pacote de
+matéria**. Aprender outro assunto depois (inglês, finanças, direito) = criar uma pasta
+nova em `materias/` com cinco arquivos; o motor já ensina. É também a arquitetura do
+produto comercial (várias matérias, vários alunos, um motor).
 
 ```
-aulas/A3_tokens/
-├── aula.json      # fio, blocos, passos (visual, legenda, checagem), rubrica, versão
-├── aula.html      # a página visual; abre em qualquer navegador; Artifact quando houver
-├── img/           # capturas reais e reconstruções rotuladas
-├── exercicio.md   # tarefa + critério de verificação + item do eixo E
-└── CHANGELOG.md   # "v2 (12/10): mudou X, fonte Y" (alimentado pelo radar)
+professor-ia/
+├── CLAUDE.md                        # aponta pra skill e pra matéria ativa
+├── .claude/skills/professor/        # MOTOR · a skill: diagnostico, aula, curto, radar
+├── motor/
+│   ├── professor.py                 # escala, agenda, próximo tópico, fio, radar, merge, validador
+│   ├── test_professor.py            # regressão do motor (independe da matéria)
+│   └── templates/                   # passo, ritmo, cabeça em ordem, aula.html, retomada
+├── materias/
+│   └── ia/                          # MATÉRIA · um pacote por assunto
+│       ├── objetivos.md             # O1..O5 e evidências finais
+│       ├── mapa.md                  # trilhas, tópicos, pré-requisitos (seção 3)
+│       ├── diagnostico.json         # banco de nivelamento
+│       ├── fontes_permitidas.md     # lista branca desta matéria
+│       ├── glossario.md
+│       └── aulas/
+│           └── A3_tokens/
+│               ├── aula.json        # fio, blocos, passos (visual, legenda, checagem), rubrica, versão
+│               ├── aula.html        # a página visual; qualquer navegador; Artifact quando houver
+│               ├── img/             # capturas reais e reconstruções rotuladas
+│               ├── exercicio.md     # tarefa + critério + item do eixo E
+│               └── CHANGELOG.md     # "v2 (12/10): mudou X, fonte Y"
+└── estado/
+    └── ia/                          # progresso, cursor, dúvidas, estacionamento desta matéria
 ```
 
-Criada uma vez, versionada quando o radar trouxer mudança. Não é regenerada por sessão.
+A aula é criada uma vez e versionada quando o radar trouxer mudança. Não é regenerada por
+sessão. O teste de regressão do motor roda com uma matéria de mentira (`materias/_teste/`)
+pra provar que o motor não depende do conteúdo de IA.
 
 ### 7.2 Regra de imagens (prioridade aplicada pelo script)
 
@@ -358,7 +388,7 @@ fontes, imagem com dado sensível.
 
 | Onda | Entrega | Aceite |
 |---|---|---|
-| 1 · Fundação | repo `professor-ia`; mapa (seção 3) em arquivo; banco de diagnóstico (3 perguntas por trilha por nível); `professor.py` + testes; skill com `diagnostico`, `aula`, `curto` (texto, sem imagens) | diagnóstico real feito; `progresso.json` gerado; sessão no PC e a seguinte no celular com estado igual. **Falhou → Supabase na fase pessoal** |
+| 1 · Fundação | repo `professor-ia` com `motor/` e `materias/ia/` separados; mapa (seção 3) em arquivo; banco de diagnóstico (3 perguntas por trilha por nível); `professor.py` + testes; skill com `diagnostico`, `aula`, `curto` (texto, sem imagens) | diagnóstico real feito; `progresso.json` gerado; sessão no PC e a seguinte no celular com estado igual. **Falhou → Supabase na fase pessoal** |
 | 2 · Aula completa e o fio | template de passo e ritmo; `aula.json` + `aula.html`; imagens por prioridade; rubrica; cursor; classificação; retomada; estacionamento; glossário | 3 aulas reais; 5+ perguntas no meio com retomada e o dono confirmando que não perdeu o fio; 1 revisão cobrada; aula legível no celular |
 | 3 · Radar e vigilância | coleta por sessão e semanal; classes; CHANGELOG; lembrete | radar real só com lista branca; 1 item A virou bloco e revisão; lembrete disparou em teste |
 | 4 · Comercial (fora do escopo) | Supabase multiusuário, web ou WhatsApp, custo por aluno | |
@@ -379,3 +409,5 @@ de API (assinatura do Claude Code). Rotina semanal: uma sessão curta por semana
 6. Escala 1 a 10 com as regras da seção 6.
 7. O fio: 5 classes, retomada obrigatória, estacionamento após 3 trocas.
 8. Radar: por sessão + semanal, classes A/A'/B/C/D, lista branca da seção 10.
+9. Motor separado da matéria desde a onda 1 (seção 7.1): a skill e os scripts não
+   sabem nada de IA; todo conteúdo mora em `materias/ia/`. Não é app nesta fase.
