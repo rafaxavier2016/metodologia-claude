@@ -1,562 +1,381 @@
-# Spec — Professor IA (tutor pessoal de IA, visual e interativo)
+# Spec — Professor IA (tutor pessoal, visual, um passo por vez)
 
-> **Status: v2, RASCUNHO PARA APROVAÇÃO.** Nenhum código é escrito antes de o dono do
-> projeto aprovar este desenho (regra 2 da metodologia). Diálogos de exemplo, diagrama e
-> staging abaixo. Edge cases estão como ramos explícitos no diagrama.
+> **Status: v3, RASCUNHO PARA APROVAÇÃO.** Nenhum código antes do ok do dono (regra 2).
+> Data: 30/09/2026 · Fase: pessoal (1 aluno). Fase comercial: seção 16, só direção.
 >
-> Data: 30/09/2026 · Fase: pessoal (1 aluno). A fase comercial está na seção 12, só como
-> direção, sem compromisso de desenho.
->
-> **O que mudou da v1 para a v2** (decisões do dono na descoberta de 30/09):
-> escala de conhecimento 1 a 10 por evidência, sem metas de tempo; lógica antes da prática
-> em toda aula; imagens reais de apps e páginas; mecanismo do "fio" para perguntar sem
-> perder a aula; quatro sinais de entendimento; regras do radar (cadência, quando uma
-> novidade entra na aula, prioridade de atualização); risco do celular tratado como teste
-> de aceite; aula sempre como arquivo HTML.
+> **v3 em relação à v2:** objetivos do dono viram o ponto de partida (desenho reverso);
+> mapa de 4 trilhas + eixo transversal; cronograma por dependência e contagem, não por
+> data; estrutura de ensino baseada em evidência (passo, ritmo, "cabeça em ordem");
+> menos texto, mais visual, também na forma como o professor fala; um exemplo de diálogo
+> só, curto, mostrando o ritmo certo.
 
 ---
 
-## 1. A dor (nas palavras do dono)
+## 1. A dor e as restrições (resumo)
 
-- "Aprender sobre IA e seus avanços."
-- "Professor eficiente que ensine usando recursos visuais e exemplos."
-- "Seguir uma matéria só lendo é cansativo; preciso de visual, mas também de poder fazer
-  perguntas à medida que vou aprendendo."
-- "O mais difícil é fazer perguntas sobre o que estou aprendendo sem que a IA perca a
-  essência do que estou aprendendo."
-- "Exercícios práticos são fundamentais, mas é muito importante que eu entenda bem a
-  lógica por trás."
-- "Mostre sempre imagens de como são os apps, páginas, ícones, formatação."
-
-Restrições declaradas:
-
-- Estudo acontece **dentro do Claude Code** (PC ou celular via Claude Code web).
-- Progresso **salvo na nuvem**; estudar preso a um único aparelho quebra o hábito.
-- Fontes em inglês servem, quanto mais atuais melhor, mas **só fontes legítimas**: nada de
-  especulação, rumor ou "ideia não oficial".
-- Tudo transmitido **em português**, com o termo em inglês seguido da tradução entre
-  parênteses. Ex.: "isso serve pra fazer uma *Home Page* (Página Principal)".
-- Nível atual **desconhecido**: precisa de diagnóstico antes de começar.
-- **Sem metas de tempo.** O que se mede é conhecimento, numa escala de 1 a 10. Quanto mais
-  estuda, mais sobe.
-
-## 2. A dor real (o que vamos endereçar, não o pedido literal)
-
-O pedido literal é "um curso com visual". A dor real é **não ter um professor que se lembre
-de onde você está e que não se perca quando você pergunta**. A solução é um sistema que:
-
-1. **Lembra** o que você domina, em que nível, e quando revisar (estado persistente).
-2. **Explica a lógica** de cada tópico com visual, depois mostra **como aparece na prática**
-   com imagens reais, e fecha com **exercício** no seu próprio stack.
-3. **Aceita pergunta no meio da aula** sem perder o fio, porque a aula mora num arquivo com
-   cursor, não na memória da conversa.
-4. **Acompanha os avanços de IA** a partir de fontes oficiais e os encaixa na trilha por
-   regra, priorizando o que muda algo que você já aprendeu.
-
-## 3. O que já existe e o que NÃO vamos reconstruir (regra 1)
-
-| Peça | Já resolvido por | Nossa decisão |
-|---|---|---|
-| Aula visual gerada a partir de fontes | NotebookLM (vídeo, mapa mental, flashcards) | Não reconstruir. Nossa aula visual nasce **do estado do aluno** e fica versionada por tópico, o que o NotebookLM não faz. |
-| Tutor socrático | Claude Learning Mode, Gemini Guided Learning, ChatGPT Study Mode | Reaproveitar o estilo. O diferencial é o estado persistente e o mecanismo do fio. |
-| Revisão espaçada | Anki + FSRS (algoritmo aberto) | Implementar versão mínima e determinística em script, com testes. Trocar por FSRS se a fase comercial vier. |
-| Busca de avanços | Motores de busca, feeds oficiais | Busca com **lista branca de domínios oficiais** (seção 8). |
-| Captura de tela de páginas | Navegador automatizado (Playwright/Chromium, já disponível no ambiente) | Usar para imagens reais de páginas públicas oficiais. |
-
-## 4. Princípios de desenho (herdados da metodologia)
-
-- **LLM não decide lógica de negócio (regra 7).** O LLM explica, desenha, redige, traduz,
-  **classifica** (a pergunta é sobre o quê; a novidade muda o quê) e **avalia uma evidência
-  isolada** contra uma rubrica. **Quem decide** o que ensinar agora, em que nível você está,
-  o que fazer com uma pergunta, o que entra do radar e quando revisar é **código lendo
-  arquivos de estado e aplicando regras fixas**.
-- **Estado é arquivo versionado em Git.** O repositório no GitHub é a nuvem. Sessão começa
-  com sincronização, termina com commit e push (regra 3).
-- **A aula mora em arquivo, não na conversa.** Estrutura, fio, seções, rubricas e cursor
-  ficam em disco. O histórico do chat pode ser perdido sem perder a aula.
-- **Fonte legítima é regra mecânica.** Lista branca em arquivo; validador rejeita URL fora
-  dela; especulação e imprensa ficam de fora mesmo citando fonte oficial.
-- **Português com termo original.** `*termo em inglês* (tradução)` na primeira ocorrência
-  em cada aula. `glossario.md` acumula.
-- **Conhecimento, não tempo.** Nenhuma meta de minutos ou sessões por semana. Nível sobe
-  por evidência gravada; nunca cai por inatividade.
-
-## 5. Escala de conhecimento: 1 a 10 por tópico, por evidência
-
-| Nível | O que prova | Evidência que o script exige no estado |
-|---|---|---|
-| 1 | Nunca visto | nenhuma |
-| 2 | Viu | todas as seções da aula fechadas com "ok" |
-| 3 | Reconhece | checagem objetiva ≥ 2/3 |
-| 4 | Reconhece com segurança | checagem objetiva 3/3 **e** identifica o elemento na imagem |
-| 5 | Entende a lógica | explicação com as próprias palavras cobre ≥ 60% da rubrica |
-| 6 | Entende bem a lógica | explicação cobre 100% da rubrica **e** perguntas na sessão < 3 |
-| 7 | Aplica | exercício prático entregue e verificado pelo resultado |
-| 8 | Aplica com autonomia | segundo exercício, sem dica, verificado |
-| 9 | Domina | resolve caso novo que combina 2+ tópicos |
-| 10 | Sustenta | nível 9 **e** 3 revisões espaçadas seguidas sem falha |
-
-Regras fixas (script, com testes):
-
-- Sobe só um nível por sessão por tópico, mesmo que a evidência permita mais. Evita
-  "subiu 4 níveis numa tarde" sem sedimentar.
-- **Revisão espaçada falhada derruba 1 nível** naquele tópico. Sem isso a escala mede o
-  que você já viu, não o que você sabe. Nunca cai por inatividade.
-- **3 ou mais perguntas no mesmo tópico na sessão seguram a subida** naquela sessão, mesmo
-  com checagem perfeita. A pergunta revela dúvida que a checagem não pegou.
-- **Nível geral** = média dos níveis dos tópicos da trilha, tópico não visto valendo 1.
-  Mostrado também por módulo. Quanto mais estuda, mais sobe.
-- **Diagnóstico** posiciona no máximo até o nível 6 (não há evidência prática). Sem
-  resposta = 1; reconhece = 3; explica a lógica = 5.
-- Intervalo de revisão: começa em 2 dias, dobra a cada acerto, volta a 2 dias no erro.
-
-## 6. Anatomia de uma aula (formato fixo, em arquivo)
-
-Toda aula tem **três blocos, nesta ordem, sem exceção**. O template é código; o LLM
-preenche, não reorganiza.
-
-1. **A lógica.** O mecanismo por dentro: por que funciona, com visual do funcionamento
-   (diagrama animado, simulação, comparação). Termina com "me explica com suas palavras",
-   corrigido contra a rubrica do arquivo. Aqui se ganham os níveis 5 e 6.
-2. **Na prática.** Como isso aparece nos apps, páginas, ícones e formatação: onde clica,
-   o que cada campo significa, como se lê a tela. Com imagens reais (seção 6.2). Termina
-   com checagem objetiva e "aponte na imagem". Níveis 3 e 4.
-3. **Exercício.** Tarefa no seu próprio stack (n8n, Supabase, Claude Code), com critério de
-   verificação pelo resultado, não pela descrição. Níveis 7 e 8.
-
-Cada bloco tem seções numeradas. Uma seção só fecha quando você responde no chat:
-`ok`, `dúvida` ou `de outro jeito` ("de outro jeito" gera nova explicação com outra
-analogia e conta como sinal de dificuldade).
-
-### 6.1 Uma pasta por tópico (arquivos visuais por assunto)
-
-```
-aulas/m3_tokens/
-├── aula.json        # fio, blocos, seções, objetivos, rubricas, checagens, versão
-├── aula.html        # a página visual (abre em qualquer navegador; Artifact quando houver)
-├── img/             # capturas reais e reconstruções rotuladas
-├── exercicio.md     # tarefa + critério de verificação
-└── CHANGELOG.md     # "v2 (12/10): mudou X por causa da fonte Y" (alimentado pelo radar)
-```
-
-A aula é criada uma vez e ganha versão nova quando o radar trouxer mudança. Não é
-regenerada a cada sessão. Isso dá consistência, custo previsível e histórico auditável.
-
-### 6.2 Regra de imagens
-
-Prioridade, aplicada pelo script ao montar a aula:
-
-1. **Captura real** de página pública oficial (docs da Anthropic, painel do n8n em
-   instância de teste, Hugging Face), feita por navegador automatizado, salva em `img/`
-   com a URL e a data.
-2. **Imagem publicada pela própria documentação oficial** (domínio na lista branca).
-3. **Reconstrução em HTML fiel** à interface, sempre com o rótulo visível
-   "reconstrução, não captura real".
-
-Áreas logadas (console com sua conta, seu n8n de produção) não são capturadas pelo
-sistema: o dono captura, e vale a regra 9. **Nenhuma imagem entra no repositório com
-chave, token, cookie ou dado de cliente visível.** O script bloqueia commit de imagem cujo
-nome ou pasta não esteja no padrão da aula, e a revisão da captura é do dono.
-
-### 6.3 `aula.json` (esquema resumido)
-
-```json
-{
-  "topico": "m3.tokens",
-  "versao": 1,
-  "fio": "Você paga e perde memória por token, não por palavra; entender isso explica custo e esquecimento.",
-  "blocos": [
-    {"id": "logica", "secoes": [
-      {"id": "L1", "objetivo": "o que é um token", "visual": "tokenizador ao vivo"},
-      {"id": "L2", "objetivo": "por que português custa mais", "visual": "comparação lado a lado"}
-    ], "rubrica": ["token é unidade do modelo, não palavra", "vocabulário vem do treino", "custo e contexto contam em tokens"]},
-    {"id": "pratica", "secoes": [
-      {"id": "P1", "objetivo": "onde ver a contagem no console", "img": "img/console_usage.png"}
-    ], "checagem": [{"q": "...", "opcoes": ["..."], "certa": 2}]},
-    {"id": "exercicio", "arquivo": "exercicio.md"}
-  ],
-  "fontes": ["https://docs.claude.com/..."]
-}
-```
-
-## 7. O fio: perguntar sem perder a aula
-
-Este é o mecanismo central do projeto. O problema real é que numa conversa longa a aula
-existe só na memória do chat, e cada pergunta dilui a essência. A solução não é o LLM
-"se esforçar mais". É a aula não depender da memória do LLM.
-
-### 7.1 Cursor em arquivo
-
-`estado/sessao_atual.json` guarda: tópico, bloco, seção atual, seções fechadas, perguntas
-feitas nesta sessão (com classe), itens no estacionamento, trocas seguidas fora do fio.
-Todo turno do professor começa relendo `aula.json` + cursor. Se a sessão cair ou você
-trocar de aparelho, o próximo turno retoma exatamente da seção onde parou.
-
-### 7.2 Toda pergunta passa por classificação antes da resposta
-
-O LLM **classifica** (permitido pela regra 7) em uma de cinco classes. O **script** decide o
-comportamento de cada classe. O LLM não escolhe "quanto desviar".
-
-| Classe | Comportamento fixo |
+| Dor (palavras do dono) | O que o desenho faz com ela |
 |---|---|
-| Sobre a seção atual | Responde completo, com fonte. |
-| Sobre seção anterior desta aula | Responde curto e aponta a seção ("isso está em L1, releia o visual"). |
-| Sobre seção futura desta aula | Uma frase só, e marca "aparece em P2". Não ensina adiantado. |
-| Sobre outro tópico da trilha | Duas frases e vai pro estacionamento com o tópico mapeado. |
-| Fora da trilha | Registra em `duvidas.md` como `fora_trilha`, responde curto, sugere onde entraria. |
+| Aprender IA e seus avanços | trilha A + radar por regra (seção 10) |
+| Professor eficiente, visual, com exemplos | passo = 1 visual + legenda + checagem (seção 5) |
+| Ler cansa; quero perguntar enquanto aprendo | o fio: aula em arquivo com cursor (seção 8) |
+| Não passar 3 assuntos sem checar nenhum | 1 ideia por passo; nada avança sem checagem (seção 5) |
+| Resumo breve pra pôr a cabeça em ordem | "cabeça em ordem" a cada 3 a 5 passos (seção 5) |
+| Entender a lógica, não só usar | bloco "lógica" sempre antes de "prática" (seção 7) |
+| Imagens de apps, páginas, ícones, formatação | regra de imagens por prioridade (seção 7.2) |
+| Medir conhecimento, não tempo, de 1 a 10 | escala por evidência (seção 6) |
+| Fontes legítimas, atuais, em inglês; aula em português com termo + tradução | lista branca mecânica; glossário (seção 10) |
+| Estudar no Claude Code, de qualquer aparelho | estado em Git; celular é teste de aceite (seção 14) |
 
-Toda pergunta incrementa `perguntas_feitas` do tópico (sinal de dificuldade, seção 5).
+## 2. Objetivos → evidências (desenho reverso)
 
-### 7.3 Retomada obrigatória
+O dono quer: **dominar IA, montar automações, programar, desenvolver softwares, e entender
+e montar estruturas complexas usando IA (sites, apps, n8n).**
 
-Depois de **qualquer** resposta a pergunta, o professor emite a linha de retomada. É
-template, não escolha do modelo:
+Cada objetivo vira uma **evidência final** concreta. A trilha existe pra chegar nelas.
 
-> Voltando. Estávamos em **L2: por que português custa mais**. Faltam L2 e L3 pra fechar a lógica.
-
-### 7.4 Estacionamento
-
-Se uma tangente passar de **3 trocas seguidas** (contadas pelo script), o professor
-pergunta: "Isso virou assunto próprio. Registro como mini-aula futura e voltamos?". O
-item vai pra `estado/estacionamento.md` com o tópico da trilha onde encaixa, e o script o
-oferece quando aquele tópico chegar.
-
-## 8. Radar de avanços: cadência e regras de entrada
-
-### 8.1 Cadência
-
-- **Coleta a cada início de sessão**, cobrindo "desde a data do último radar". Nada se
-  perde entre sessões, e não se gasta nada enquanto você não estuda.
-- **Rotina semanal** independente da sessão (a mesma rotina que vigia o silêncio, seção
-  10): coleta, grava em `radar/entrada/`, e alerta se houver item da classe A (abaixo).
-- **Não diário por padrão.** As fontes da lista branca publicam poucas coisas relevantes
-  por semana; rodar todo dia gastaria uso sem trazer nada na maioria dos dias. Trocar para
-  diário é mudar uma linha da rotina, se um dia o dono quiser.
-- **Preço da legitimidade, dito de frente:** você vai saber das coisas alguns dias depois
-  de quem lê rumor em rede social. Só entra quando a fonte oficial publicar.
-
-### 8.2 O que acontece com cada novidade (decisão de código)
-
-O LLM **extrai** de cada item: tópico da trilha afetado, se é **mudança de algo existente**
-ou **assunto novo**, e se muda **a lógica** ou **a prática** (interface, preço, nome). O
-script cruza com o seu nível naquele tópico e aplica:
-
-| Classe | Condição | O que o sistema faz |
-|---|---|---|
-| **A. Muda o que você já aprendeu** | tópico com nível ≥ 3 | Entra **no início da próxima sessão**, antes de revisão e aula nova, como bloco de atualização de até 10 min. A aula ganha versão nova com `CHANGELOG`. Uma pergunta de revisão sobre o fato novo é agendada. **Prioridade máxima**: conhecimento velho aplicado é pior que nenhum. |
-| **A'. Muda só a prática** (tela, preço, nome) | tópico com nível ≥ 3 | Não vira bloco. Captura nova em `img/`, uma linha no `CHANGELOG`, uma linha no digest. |
-| **B. Assunto novo com base pronta** | pré-requisitos com nível ≥ 5 | Entra **na fila do módulo**; é ensinado quando a trilha chegar lá. No digest aparece uma linha "na fila de M6". Não é ensinado na hora: novidade sem base é notícia, e notícia sem contexto é o que cansa. |
-| **C. Assunto novo sem base** | pré-requisitos < 5 | Só registro em `radar/AAAA-MM-DD.md` com "vai aparecer em M8". Zero ensino. |
-| **D. Mudança de paradigma** | item marcado como grande (novo tipo de modelo, novo protocolo, capacidade nova) | Independente de nível, um parágrafo leigo no digest: "o que é e por que importa", rotulado **contexto, não aula**. Não altera nível. Atende a dor 1 sem furar a trilha. |
-
-Limites fixos: no máximo **1 bloco de atualização por sessão** (o resto espera); tópico
-que receber atualização tem a revisão espaçada reagendada para 2 dias.
-
-### 8.3 Lista branca inicial (editável por commit)
-
-Primárias e oficiais apenas. Notícia, opinião, rede social e vídeo de comentário ficam de
-fora por regra. O validador compara **domínio e prefixo de caminho** quando indicado.
-
-- Anthropic: `anthropic.com`, `docs.claude.com`
-- OpenAI: `openai.com`
-- Google: `deepmind.google`, `ai.google.dev`, `blog.google/technology/ai/`
-- Meta: `ai.meta.com`
-- Mistral: `mistral.ai`
-- Artigos: `arxiv.org` (rotular "pré-publicação, não revisado por pares")
-- Hugging Face: `huggingface.co/blog/`, `huggingface.co/docs/`, cartões de modelo oficiais
-- Ferramentas: `pytorch.org`, `docs.n8n.io`, `supabase.com/docs`
-- Ensino: `deeplearning.ai`, domínios `.edu`
-
-Critério pra incluir: ser o autor da coisa. Critério pra recusar: ser alguém falando sobre
-a coisa.
-
-## 9. Os quatro sinais de entendimento (como o sistema sabe o que você leu ou entendeu)
-
-A IA não vê seus olhos. O desenho separa quatro coisas que costumam ser confundidas:
-
-| Sinal | O que mede | Como é capturado | Alimenta |
+| # | Quero conseguir... | Evidência final (o que prova) | Trilha principal |
 |---|---|---|---|
-| **Leu** | passou pela seção | `ok` / `dúvida` / `de outro jeito` no chat, seção a seção | nível 2 |
-| **Entendeu a lógica** | consegue explicar o mecanismo | explicação com suas palavras corrigida contra a rubrica do `aula.json` | níveis 5 e 6 |
-| **Aprendeu** | ainda sabe dias depois | revisão espaçada | sobe/desce 1 nível; nível 10 |
-| **Sabe usar** | aplica em caso real | exercício verificado pelo resultado | níveis 7 a 9 |
+| O1 | Dominar IA: explicar como funciona e julgar o que é real | Avaliar um modelo ou ferramenta nova em 1 hora e escrever parecer com fontes oficiais, sem erro de conceito | A |
+| O2 | Montar automações | Automação n8n com IA em produção, com staging, regressão e alerta (a própria metodologia do dono) | B |
+| O3 | Programar | Escrever e depurar um serviço próprio (JavaScript ou Python) que consome uma API e grava em banco | C |
+| O4 | Desenvolver softwares | Site ou app funcional com backend, login, banco e deploy, construído com Claude Code | D |
+| O5 | Montar estruturas complexas com IA | **Projeto-síntese:** um sistema que junta app + n8n + agente IA + banco, seguro e versionado. Recomendação: a versão comercial deste próprio Professor IA | A+B+C+D |
 
-Sinais auxiliares: perguntas por tópico (seção 5) e "de outro jeito" (marca a seção como
-difícil; a próxima versão da aula ganha analogia alternativa nela).
+O5 é o fim da trilha. Cada trilha tem um projeto menor no meio pra não deixar a prática só
+pro final.
 
-Sinal **desligado por padrão**, decisão do dono: seção longa fechada em poucos segundos
-dispara uma checagem extra. Não vira nota, só pergunta.
+## 3. Mapa de trilhas
 
-## 10. Diálogos de exemplo
+Quatro trilhas e um eixo transversal. Cada tópico tem pré-requisitos; o mapa é um grafo,
+não uma fila.
 
-### 10.1 Primeira sessão: diagnóstico
+```mermaid
+flowchart LR
+    subgraph A[A · Entender IA]
+        A1[Fundamentos] --> A2[Transformer, atenção, embeddings] --> A3[LLM na prática: tokens, contexto, custo] --> A4[Prompting e contexto] --> A5[RAG] --> A6[Agentes, tools, MCP] --> A7[Avaliação, alucinação, segurança]
+        A3 --> A8[Como se treina: fine-tuning, RLHF]
+        A3 --> A9[Multimodal]
+        A7 --> A10[Ecossistema e avanços · radar]
+    end
+    subgraph B[B · Usar IA e automatizar]
+        B1[Claude Code: comandos, CLAUDE.md, skills, MCP] --> B2[n8n base: nodes, expressões, webhooks] --> B3[n8n + IA: agente, tools, memória] --> B4[Integrações: APIs, WhatsApp, Supabase] --> B5[Avaliar agentes] --> B6[Operar em produção]
+    end
+    subgraph C[C · Programar]
+        C1[Lógica e JSON] --> C2[JavaScript essencial] --> C3[APIs HTTP] --> C4[Python de automação]
+        C2 --> C5[SQL e banco] --> C6[Git] --> C7[Depurar e testar]
+    end
+    subgraph D[D · Desenvolver software]
+        D1[Como um app é feito] --> D2[HTML, CSS, JS de página] --> D3[Framework web] --> D4[Backend com Supabase: auth, RLS] --> D5[Deploy] --> D6[Arquitetura de sistemas complexos]
+    end
+    A3 --> B3
+    A6 --> B3
+    C1 --> B2
+    C3 --> B4
+    C5 --> D4
+    C6 --> D5
+    A7 --> B5
+    B6 --> O5((O5 · Projeto-síntese))
+    D6 --> O5
+```
+
+**Eixo transversal E · Organizar e proteger:** segredos, versionamento, staging, backup,
+teste, o guia de boas práticas do próprio dono. Não é trilha separada: cada exercício de
+B, C e D tem um item de E no critério de verificação ("sem segredo no arquivo", "commit
+antes de mexer", "testou no staging").
+
+Tópicos detalhados (passos e checagens) nascem na onda 1, tópico a tópico, nunca todos de
+uma vez.
+
+## 4. Cronograma: por dependência e contagem, não por data
+
+- **Próximo tópico** = o primeiro do mapa cujos pré-requisitos estão no nível 5 ou mais e
+  que ainda está abaixo de 5. Decisão do script.
+- **Rotação entre trilhas:** cada sessão foca **um** tópico de **uma** trilha. Sessões se
+  alternam entre trilhas quando os pré-requisitos permitem (variedade sem mistura dentro
+  da aula). A revisão espaçada é onde os tópicos se misturam.
+- **O que o dono vê** no começo de toda sessão: um mapa com o tópico atual destacado, os
+  que abrem depois dele, e "faltam N passos pra fechar este tópico e M tópicos pra O2".
+  Contagens, nunca datas.
+- **Diagnóstico inicial** posiciona em cada trilha (até o nível 6). O mapa já nasce com
+  os tópicos conhecidos marcados.
+
+## 5. Estrutura de ensino (baseada em evidência)
+
+Base: Rosenshine (passos pequenos, checar sempre, revisar sempre), Mayer (visual carrega
+a ideia, texto é legenda, cortar excesso, segmentar), Dunlosky (testar a si mesmo e
+espaçar são as técnicas mais fortes; explicar com as próprias palavras e perguntar "por
+quê" vêm em seguida; reler e grifar são fracas).
+
+### 5.1 O passo (unidade mínima)
 
 ```
-Você:      /professor diagnostico
-
-Professor: Antes de ensinar, preciso saber onde você está. São 18 perguntas, 3 por área.
-           Não tem nota: o objetivo é eu não te ensinar o que você já sabe e não pular
-           o que você precisa. "Não sei" é resposta válida e útil.
-
-           Área 1 de 6: Fundamentos.
-           1) Em uma frase: qual a diferença entre *Machine Learning* (Aprendizado de
-              Máquina) e programação tradicional?
-
-Você:      No ML o programa aprende com exemplos em vez de eu escrever a regra.
-
-Professor: Certo, e você explicou a lógica, não só reconheceu. (...)
-           [ao fim das 18]
-           Nivelamento salvo em estado/progresso.json:
-
-           Fundamentos ........... 5
-           LLMs na prática ....... 3
-           Prompting ............. 5
-           Embeddings e RAG ...... 2
-           Agentes e ferramentas . 3
-           Treinamento/ajuste .... 1
-           Nível geral ........... 3,2
-
-           Recomendação: começar por M3 (LLM na prática). Fundamentos e prompting entram
-           só em revisão. Aprovar esse ponto de partida?
+PASSO = 1 ideia = 1 visual + legenda de até 3 linhas + 1 checagem de memória
+        nada avança sem a checagem
 ```
 
-### 10.2 Sessão normal: atualização do radar, revisão, aula com pergunta no meio
+- Se um tema tem três partes, são três passos com três checagens.
+- A checagem é **pergunta**, nunca "leu? ok". Respostas: acertou / errou / "de outro jeito".
+- "De outro jeito" gera outra explicação com outra analogia e marca o passo como difícil.
+
+### 5.2 O ritmo de toda aula
 
 ```
-Você:      /professor aula
+revisar (2 min, de memória, tópicos sorteados entre os vencidos)
+   ↓
+passo → checo → passo → checo → passo → checo
+   ↓
+CABEÇA EM ORDEM · 1 diagrama-resumo + você diz em 1 frase o que viu
+   ↓
+passo → checo → ...  → cabeça em ordem
+   ↓
+fechar: resumo visual da aula + "a próxima é X, porque hoje você viu Y"
+```
 
-Professor: [sincronizei o estado; radar desde 23/09: 1 item classe A; 1 revisão vencida]
+"Cabeça em ordem" acontece a cada 3 a 5 passos e ao fim de cada bloco. É template.
 
-           Antes de tudo, uma atualização de 5 min em algo que você já sabe:
-           a Anthropic mudou a documentação de *prompt caching* (cache de prompt), que
-           você viu em M3 (nível 5). O que mudou: (...). Fonte: (link oficial).
-           A aula m3_tokens virou v2 (CHANGELOG atualizado). Uma pergunta sobre isso
-           entra na sua revisão de 02/10.
+### 5.3 Regras de forma (valem pra aula E pra fala do professor no chat)
 
-           Revisão de 2 min: *attention* (atenção), nível 6.
-           Sem olhar nada: por que "banco" é entendido diferente em "banco de praça" e
-           "banco do Brasil"?
+| Regra | Origem |
+|---|---|
+| Visual primeiro; o texto é legenda (até 3 linhas) | Mayer, princípio multimídia |
+| Sem enfeite, sem "curiosidade extra" no meio do passo | Mayer, coerência |
+| Uma seta, um destaque: o que olhar na imagem | Mayer, sinalização |
+| Termo em inglês + (tradução) na primeira vez; glossário acumula | restrição do dono |
+| Antes do "como", o "por quê" | Dunlosky, interrogação elaborativa |
+| Mensagem do professor no chat: curta, com o visual ou o link dele; nunca parágrafo | dono: "menos texto, mais visual" |
 
-Você:      Porque ele olha as outras palavras da frase e dá peso maior pras que importam.
+Tudo isso é **template em código**. O LLM preenche o passo; não decide quantas ideias
+cabem, nem se pula a checagem, nem se pula a cabeça em ordem.
 
-Professor: Exato. Revisão fechada. Próxima em 8 dias.
+## 6. Escala de conhecimento: 1 a 10 por tópico, por evidência
 
-           Aula de hoje: M3 · *tokens* e *context window* (janela de contexto).
-           Fio da aula: você paga e perde memória por token, não por palavra.
-           Abri a aula visual (aulas/m3_tokens/aula.html, link do Artifact no celular).
+| Nível | Prova | Evidência que o script exige |
+|---|---|---|
+| 1 | nunca visto | nenhuma |
+| 2 | viu | todos os passos da aula fechados |
+| 3 | reconhece | checagens do bloco prática ≥ 2/3 |
+| 4 | reconhece com segurança | 3/3 e apontou na imagem |
+| 5 | entende a lógica | explicação própria cobre ≥ 60% da rubrica |
+| 6 | entende bem | 100% da rubrica e perguntas na sessão < 3 |
+| 7 | aplica | exercício verificado pelo resultado |
+| 8 | aplica sozinho | segundo exercício, sem dica |
+| 9 | domina | caso novo que mistura 2+ tópicos |
+| 10 | sustenta | nível 9 e 3 revisões seguidas sem falha |
 
-           Bloco 1, A lógica · L1: o que é um token.
-           No visual, digite uma frase no tokenizador e veja como ela é fatiada.
-           Quando terminar: ok, dúvida, ou de outro jeito.
+Regras fixas: sobe 1 por sessão por tópico; revisão falhada derruba 1; 3 perguntas no
+tópico seguram a subida naquela sessão; nunca cai por inatividade; diagnóstico posiciona
+até 6; nível geral = média (não visto = 1), mostrado também por trilha; revisão começa em
+2 dias, dobra no acerto, volta a 2 no erro.
 
-Você:      Pera, então o custo é por token e não por palavra? Em português sai mais caro?
+## 7. Anatomia de uma aula
 
-Professor: [classe: seção futura L2 → uma frase, sem adiantar]
-           Sim, e é exatamente a próxima seção. Guardo pra L2.
-           Voltando. Estávamos em **L1: o que é um token**. Falta você fechar L1.
+Três blocos, nesta ordem, cada um feito de passos:
 
-Você:      ok
+| Bloco | Pergunta que responde | Como fecha | Níveis |
+|---|---|---|---|
+| **Lógica** | por que funciona | cabeça em ordem + "me explica com suas palavras" (rubrica) | 5 e 6 |
+| **Prática** | como aparece na tela | checagem objetiva + "aponte na imagem" | 3 e 4 |
+| **Exercício** | você consegue fazer | verificação pelo resultado, com item do eixo E | 7 e 8 |
 
-Professor: L1 fechada. L2: por que português custa mais. (...) [responde a pergunta aqui]
+### 7.1 Uma pasta por tópico
+
+```
+aulas/A3_tokens/
+├── aula.json      # fio, blocos, passos (visual, legenda, checagem), rubrica, versão
+├── aula.html      # a página visual; abre em qualquer navegador; Artifact quando houver
+├── img/           # capturas reais e reconstruções rotuladas
+├── exercicio.md   # tarefa + critério de verificação + item do eixo E
+└── CHANGELOG.md   # "v2 (12/10): mudou X, fonte Y" (alimentado pelo radar)
+```
+
+Criada uma vez, versionada quando o radar trouxer mudança. Não é regenerada por sessão.
+
+### 7.2 Regra de imagens (prioridade aplicada pelo script)
+
+1. **Captura real** de página pública oficial, por navegador automatizado, com URL e data.
+2. **Imagem publicada pela documentação oficial** (domínio na lista branca).
+3. **Reconstrução em HTML fiel**, sempre rotulada "reconstrução, não captura real".
+
+Área logada é do dono capturar. **Nenhuma imagem entra com chave, token, cookie ou dado
+de cliente visível** (regra 9). Script recusa imagem fora de `aulas/*/img/`.
+
+## 8. O fio: perguntar sem perder a aula
+
+A aula não mora na memória do chat. Mora em `aula.json` + cursor
+(`estado/sessao_atual.json`: tópico, bloco, passo atual, passos fechados, perguntas com
+classe, estacionamento). Todo turno relê os dois. Sessão cai ou muda de aparelho: retoma
+no passo exato.
+
+| A pergunta é sobre... | Comportamento fixo (script decide, LLM só classifica) |
+|---|---|
+| o passo atual | responde completo, com fonte |
+| um passo anterior desta aula | responde curto e aponta o passo |
+| um passo futuro desta aula | uma frase, marca "aparece no passo N", não adianta |
+| outro tópico da trilha | duas frases, vai pro estacionamento |
+| fora da trilha | registra, responde curto, sugere onde entraria |
+
+Após **qualquer** resposta, linha de retomada obrigatória:
+"Voltando. Estávamos no **passo 2: por que português custa mais**."
+Tangente com mais de 3 trocas: professor oferece estacionar e voltar. O script conta.
+
+## 9. Os quatro sinais de entendimento
+
+| Sinal | Como é capturado | Alimenta |
+|---|---|---|
+| Leu | passo fechado com resposta à checagem | nível 2 |
+| Entendeu a lógica | explicação própria vs rubrica | 5 e 6 |
+| Aprendeu | revisão espaçada, dias depois | sobe/desce; nível 10 |
+| Sabe usar | exercício verificado | 7 a 9 |
+
+Sinais auxiliares: perguntas por tópico, "de outro jeito". Desligado por padrão: passo
+longo fechado em segundos dispara checagem extra (não vira nota).
+
+## 10. Radar de avanços
+
+- **Cadência:** coleta no início de cada sessão ("desde o último radar") + rotina semanal
+  independente. Não diário por padrão. Preço da legitimidade: alguns dias depois de quem
+  lê rumor.
+- **Lista branca (domínio + prefixo de caminho):** `anthropic.com`, `docs.claude.com`,
+  `openai.com`, `deepmind.google`, `ai.google.dev`, `blog.google/technology/ai/`,
+  `ai.meta.com`, `mistral.ai`, `arxiv.org` (rotulado pré-publicação), `huggingface.co/blog/`,
+  `huggingface.co/docs/`, `pytorch.org`, `docs.n8n.io`, `supabase.com/docs`,
+  `deeplearning.ai`, domínios `.edu`. Critério: ser o autor da coisa.
+
+| Classe | Condição | O sistema faz |
+|---|---|---|
+| A · muda a lógica de algo aprendido | tópico ≥ 3 | bloco de atualização no início da próxima sessão (máx. 1 por sessão); aula ganha versão; pergunta de revisão em 2 dias. **Prioridade máxima.** |
+| A' · muda só a tela, preço, nome | tópico ≥ 3 | nova captura, linha no CHANGELOG, linha no digest |
+| B · novo, com base pronta | pré-requisitos ≥ 5 | fila do módulo; "na fila de B3" no digest |
+| C · novo, sem base | pré-requisitos < 5 | só registro: "vai aparecer em A8" |
+| D · mudança de paradigma | item grande | parágrafo leigo "contexto, não aula"; não altera nível |
+
+## 11. Exemplo de diálogo (o ritmo certo, um passo por vez)
+
+```
+Professor: [sincronizado · radar: nada classe A · 1 revisão vencida]
+
+           Revisão (de memória): em A2 você viu *attention* (atenção).
+           Por que "banco" muda de sentido entre "banco de praça" e "banco do Brasil"?
+
+Você:      Ele olha as outras palavras e dá peso pras que importam.
+
+Professor: ✔ Próxima revisão em 8 dias.
+
+           Hoje: A3 · *tokens*. Fio: você paga e perde memória por token, não por palavra.
+           Mapa: faltam 7 passos neste tópico · depois abre A4 e B3.
+
+           Passo 1 de 7 · o que é um token
+           [visual: frase "configuração do agente" fatiada em pedaços coloridos]
+           Um token é um pedaço de texto que o modelo enxerga como unidade.
+           Nem sempre é uma palavra.
+           → Na imagem, quantos pedaços tem "configuração"?
+
+Você:      Três.
+
+Professor: ✔
+           Passo 2 de 7 · por que português custa mais
+           [visual: "configuration" = 1 pedaço · "configuração" = 3 pedaços]
+           O vocabulário do modelo foi aprendido com mais texto em inglês.
+           → Qual das duas frases o modelo "lê" com menos pedaços?
+
+Você:      Pera, e emoji? Conta quanto?
+
+Professor: [classe: passo atual] Conta, e costuma custar mais de um pedaço. Fonte: (doc).
+           Voltando. Estávamos no **passo 2: por que português custa mais**.
+           → Qual das duas frases o modelo lê com menos pedaços?
+
+Você:      A em inglês.
+
+Professor: ✔
+           Passo 3 de 7 · custo e memória contam em tokens
+           [visual: régua de contexto enchendo conforme a conversa cresce]
            (...)
-           Fim do bloco da lógica. Me explica com suas palavras: por que um agente no
-           n8n "esquece" o começo de conversas longas?
 
-Você:      Porque a conversa vira tokens e a janela tem limite; quando estoura, o modelo
-           só vê os últimos.
+Professor: CABEÇA EM ORDEM · passos 1 a 3
+           [diagrama: texto → pedaços → conta-se pedaços → custo e limite]
+           Em uma frase, com suas palavras: o que você viu até aqui?
 
-Professor: Rubrica: 3 de 3 pontos cobertos. Você tinha 2 perguntas no tópico, abaixo do
-           limite. m3.tokens: nível 3 → 4 hoje (sobe 1 por sessão; a explicação já garante
-           o próximo degrau na próxima sessão com revisão).
+Você:      O modelo lê em pedaços, português vira mais pedaços, e é isso que custa e enche a memória.
 
-           Bloco 2, Na prática · P1: onde a contagem aparece no console.
-           [imagem real da página de uso, capturada em 28/09]
-           Aponte: qual dos três números é o que cobra?
-           (...)
-           Salvo e enviado pro GitHub (commit "sessao 2026-09-30: m3.tokens 3→4").
+Professor: ✔ Rubrica: 3 de 3.
+           Passo 4 de 7 · (...)
 ```
 
-### 10.3 Radar semanal
-
-```
-Professor: Radar 23/09 a 30/09, só fontes da lista branca. 3 itens relevantes; 5
-           descartados (fora da lista ou opinião).
-
-           A · Anthropic: doc nova de *prompt caching*. Muda M3 (nível 5). Entra no início
-               da próxima sessão. Fonte: (link).
-           B · Hugging Face: modelo aberto de *embeddings* multilíngues. Vai pra fila de M5
-               (você está em 2; precisa de 5 em M2 pra entrar).
-           D · Contexto, não aula: OpenAI publicou (…). Em uma frase, por que importa: (…).
-
-           Salvo em radar/2026-09-30.md.
-```
-
-### 10.4 Edge cases que viram ramo explícito
-
-- **Sem rede ou push falhou:** a sessão continua; ao final, aviso em destaque "progresso
-  salvo só local, não subiu", e nova tentativa no início da próxima sessão.
-- **Estado em branch não mesclada (celular):** ao iniciar, a skill busca todas as branches
-  remotas e mescla progresso pendente **por tópico, registro mais recente vence**, mostrando
-  o que juntou. Nunca descarta em silêncio. Esse cenário é **teste de aceite da onda 1**:
-  se Git não sustentar o celular, o estado vai para Supabase ainda na fase pessoal.
-- **Fonte fora da lista branca citada:** comando falha mostrando a URL; o LLM refaz sem a
-  fonte ou o dono inclui a fonte por commit.
-- **Sessão interrompida no meio da aula:** cursor salvo; próxima sessão (qualquer aparelho)
-  retoma na seção exata, com a linha de retomada.
-- **Muito tempo sem estudar (> 14 dias):** nenhum nível cai; o script propõe sessão só de
-  revisão antes de tópico novo.
-- **Modo curto (celular, 10 min):** `/professor curto` faz só revisões vencidas ou fecha
-  uma única seção pendente. Sem aula nova.
-
-## 11. Diagrama do fluxo de uma sessão
+## 12. Fluxo de uma sessão
 
 ```mermaid
 flowchart TD
-    A[/professor aula/] --> B[Sincronizar: fetch todas as branches + merge de estado por tópico]
-    B --> R[Radar desde o último: coletar, LLM extrai, script classifica A/A'/B/C/D]
-    R --> C[scripts/professor.py decide a ordem: atualização A → revisões → aula]
-    C -->|há item A| U[Bloco de atualização, máx 1, aula ganha versão nova]
-    U --> D
-    C -->|sem item A| D{Revisão vencida?}
-    D -->|sim| E[Revisão curta, até 3 tópicos; script sobe/desce nível]
-    D -->|não| F
-    E --> F{Aula em andamento no cursor?}
-    F -->|sim| G[Retomar na seção exata]
-    F -->|não| H{Tópico novo elegível?}
-    H -->|não| I[Trilha concluída neste ramo: oferecer fila do radar]
-    H -->|sim| J[Montar aula: template 3 blocos, imagens por prioridade, fontes validadas]
-    J -->|URL fora da lista| J2[Falha: mostrar URL, refazer]
-    J2 --> J
-    J --> G
-    G --> K[Seção atual: aluno responde ok / dúvida / de outro jeito, ou pergunta]
-    K -->|pergunta| L[LLM classifica em 5 classes; script aplica comportamento; retomada obrigatória]
-    L -->|> 3 trocas seguidas| P[Oferecer estacionamento]
-    P --> K
-    L --> K
-    K -->|ok| M{Fechou um bloco?}
-    M -->|lógica| N1[Explicação com as próprias palavras → rubrica]
-    M -->|prática| N2[Checagem objetiva + apontar na imagem]
-    M -->|exercício| N3[Verificar resultado do exercício]
-    M -->|não| K
-    N1 --> O[Script atualiza nível, agenda revisão, grava evidência]
-    N2 --> O
-    N3 --> O
-    O --> Q[git commit + git push]
-    Q -->|falhou| Q2[Avisar em destaque: salvo só local]
-    Q --> Z[Fim]
-    Q2 --> Z
+    A[/professor aula/] --> B[Sincronizar: fetch branches + merge de estado por tópico]
+    B --> R[Radar desde o último → classes A/A'/B/C/D]
+    R --> C[Script decide ordem: atualização A → revisão → aula]
+    C --> D[Revisão de memória, tópicos sorteados entre vencidos]
+    D --> E{Aula em andamento?}
+    E -->|sim| F[Retomar no passo exato]
+    E -->|não| G[Próximo tópico do mapa por pré-requisito]
+    G --> H[Montar aula: 3 blocos de passos, imagens, fontes validadas]
+    H -->|URL fora da lista| H2[Falha: mostrar URL, refazer] --> H
+    H --> F
+    F --> P[Passo: visual + legenda + checagem]
+    P -->|pergunta| Q[Classificar → comportamento fixo → retomada]
+    Q --> P
+    P -->|checagem respondida| S{3 a 5 passos ou fim de bloco?}
+    S -->|não| P
+    S -->|sim| T[Cabeça em ordem: diagrama + frase própria]
+    T -->|fim de bloco| U[Evidência do bloco: rubrica / imagem / exercício]
+    T -->|não| P
+    U --> V[Script atualiza nível, agenda revisão]
+    V --> W[Fechar: resumo visual + próxima]
+    W --> X[git commit + push]
+    X -->|falhou| X2[Aviso: salvo só local]
 ```
 
-## 12. Métricas (conhecimento, não tempo)
+## 13. Métricas (conhecimento, sem prazo)
 
-Todas saem de `estado/progresso.json`. Nenhuma tem prazo.
+Nível geral e por trilha · retenção em revisão · exercícios verificados · cobertura
+(tópicos ≥ 5) · atualizações absorvidas (classe A que virou revisão acertada) · progresso
+rumo a cada evidência final O1 a O5.
 
-- **Nível geral** (1 a 10) e **nível por módulo**.
-- **Taxa de retenção**: acertos em revisão vencida / total de revisões.
-- **Exercícios verificados** (contagem por módulo).
-- **Cobertura da trilha**: tópicos com nível ≥ 5 / total.
-- **Atualizações absorvidas**: itens classe A que viraram revisão acertada.
+Marcos de leitura: nível 5 = base sólida; 7 = constrói sozinho; 9 = ensina outros.
 
-Marcos de leitura (não metas): nível geral 5 = base sólida para conversar de igual com
-quem constrói; 7 = constrói sozinho no seu stack; 9 = ensina outros.
+## 14. Staging
 
-## 13. Staging: desenho do ensaio isolado
+Blast radius baixo (sem usuário externo). O que pode quebrar: progresso real, regra de
+fontes, imagem com dado sensível.
 
-**Blast radius:** baixo. Sem usuário externo. O que pode quebrar: o arquivo de progresso
-real (histórico de estudo), a confiança na regra de fontes, e uma imagem com dado
-sensível entrando no repositório.
+1. **Perfil de teste** (`--perfil teste` → `estado-teste/`, `aulas-teste/`, prefixo
+   `TESTE_`, apagado ao fim). 
+2. **Regressão** `test_professor.py`: próximo tópico por pré-requisito; sobe 1 por sessão;
+   desce por revisão; bloqueio por perguntas; classes de pergunta; contagem de trocas;
+   cabeça em ordem a cada 3 a 5 passos; classes do radar; merge de branch; validador de
+   fontes (boa, ruim, subdomínio falso, prefixo). **3x verde** antes de promover.
+3. **Paridade:** teste com cópia do `progresso.json` real.
+4. **Canário:** primeira sessão real da versão nova é só revisão, com o dono olhando o diff.
+5. **Reversão:** Git, commit por sessão.
+6. **Silêncio é falha:** rotina semanal fora do repo (lembrete sem commit em 7 dias + radar).
+7. **Segurança:** sem segredo em arquivo; imagem só em `aulas/*/img/`; captura logada é do dono.
 
-1. **Perfil de teste.** `--perfil teste` lê e grava em `estado-teste/` e `aulas-teste/`.
-   Todo desenvolvimento roda nele. Registros com prefixo `TESTE_`. Fim de sessão de
-   desenvolvimento apaga tudo (regra 6).
-2. **Regressão do script.** `scripts/test_professor.py` cobre: escolha do próximo tópico
-   com pré-requisito; subida limitada a 1 por sessão; descida por revisão falhada;
-   bloqueio por 3 perguntas; classificação de pergunta → comportamento; contagem de
-   trocas para estacionamento; classes A/A'/B/C/D do radar por nível; merge de branch
-   por tópico; validador de fontes com URL boa, ruim, subdomínio falso e prefixo de
-   caminho. **3x verde** antes de qualquer alteração ir pro perfil real.
-3. **Paridade.** Antes de promover, o teste roda com **cópia do `progresso.json` real**,
-   não com JSON magro inventado (lição de 26/08).
-4. **Canário.** Primeira sessão real com versão nova é uma revisão curta, com o dono
-   olhando o diff do `progresso.json` antes do push.
-5. **Reversibilidade.** Git. Commit atômico por sessão, nomeado
-   (`sessao AAAA-MM-DD: topico N→M`). Reverter é um `git revert`.
-6. **Silêncio também é falha (regra 8).** Rotina semanal fora do repositório: checa a data
-   do último commit de sessão e, sem commit em 7 dias, manda lembrete; na mesma passada,
-   coleta o radar. O lembrete vive fora do sistema que pode estar parado.
-7. **Segurança (regra 9).** Sem segredo em nenhum arquivo. Script recusa commit de imagem
-   fora de `aulas/*/img/`; captura de área logada é do dono, com revisão visual antes.
+## 15. Ondas
 
-## 14. Plano de Ação em ondas (critério de aceite por onda)
-
-### Onda 1: fundação, diagnóstico, sincronização
-- Repositório privado `professor-ia` com a estrutura da seção 6.1 e `estado/`.
-- `curriculo/trilha.md` v1 (seção 15) e `banco_diagnostico.json` (18 perguntas com
-  gabarito e rubrica).
-- `scripts/professor.py`: escala 1 a 10, agenda de revisão, merge de branch, validador
-  de fontes. `test_professor.py` 3x verde.
-- Skill `professor` com `diagnostico`, `aula` (sem imagens ainda), `curto`.
-- **Aceite:** diagnóstico real feito pelo dono; `progresso.json` gerado; uma sessão no PC
-  e a seguinte no celular com o estado batendo nos dois. **Se falhar, decisão explícita:
-  Supabase na fase pessoal.**
-
-### Onda 2: aula completa e o fio
-- Template de 3 blocos; `aula.json` + `aula.html` por tópico; regra de imagens com
-  captura real por navegador; rubrica e explicação com as próprias palavras.
-- Cursor, classificação de perguntas em 5 classes, retomada obrigatória, estacionamento.
-- Glossário automático.
-- **Aceite:** 3 aulas reais concluídas; pelo menos 5 perguntas feitas no meio de aulas com
-  a retomada funcionando e o dono confirmando que não perdeu o fio; 1 revisão vencida
-  cobrada; aula abre e é legível no celular.
-
-### Onda 3: radar, atualização e vigilância
-- Coleta por sessão e rotina semanal; classes A/A'/B/C/D; versão de aula com CHANGELOG.
-- Lembrete por silêncio.
-- **Aceite:** um radar real só com fontes da lista; um item classe A virou bloco de
-  atualização e pergunta de revisão; lembrete disparou em teste controlado.
-
-### Onda 4 (futuro, fora deste escopo): comercial
-- Estado migra para Supabase (multiusuário, RLS por aluno); interface web ou WhatsApp;
-  custo de LLM por aluno medido desde o dia 1.
-
-## 15. Trilha v1 (módulos; tópicos detalhados nascem na onda 1)
-
-| Módulo | Tema | Pré-requisito |
+| Onda | Entrega | Aceite |
 |---|---|---|
-| M1 | Fundamentos: IA, *Machine Learning* (Aprendizado de Máquina), *Deep Learning* (Aprendizado Profundo), treino vs inferência | nenhum |
-| M2 | Redes neurais e o *Transformer*: *embeddings* (vetores de significado), *attention* (atenção) | M1 |
-| M3 | LLM na prática: *tokens*, *context window* (janela de contexto), *temperature*, custo | M2 |
-| M4 | *Prompting* e engenharia de contexto: *system prompt*, exemplos, *structured output* (saída estruturada) | M3 |
-| M5 | Busca semântica e *RAG* (geração com recuperação) | M2, M4 |
-| M6 | Agentes, *tools* (ferramentas), *MCP*, decisão de código vs de modelo | M4 |
-| M7 | Avaliação, alucinação, segurança, *guardrails* (trilhos de proteção) | M6 |
-| M8 | Como modelos são treinados: pré-treino, *fine-tuning* (ajuste fino), *RLHF* | M3 |
-| M9 | Multimodal: imagem, áudio, voz | M3 |
-| M10 | Ecossistema e avanços (alimentado pelo radar, sem fim) | M7 |
+| 1 · Fundação | repo `professor-ia`; mapa (seção 3) em arquivo; banco de diagnóstico (3 perguntas por trilha por nível); `professor.py` + testes; skill com `diagnostico`, `aula`, `curto` (texto, sem imagens) | diagnóstico real feito; `progresso.json` gerado; sessão no PC e a seguinte no celular com estado igual. **Falhou → Supabase na fase pessoal** |
+| 2 · Aula completa e o fio | template de passo e ritmo; `aula.json` + `aula.html`; imagens por prioridade; rubrica; cursor; classificação; retomada; estacionamento; glossário | 3 aulas reais; 5+ perguntas no meio com retomada e o dono confirmando que não perdeu o fio; 1 revisão cobrada; aula legível no celular |
+| 3 · Radar e vigilância | coleta por sessão e semanal; classes; CHANGELOG; lembrete | radar real só com lista branca; 1 item A virou bloco e revisão; lembrete disparou em teste |
+| 4 · Comercial (fora do escopo) | Supabase multiusuário, web ou WhatsApp, custo por aluno | |
 
-## 16. Estimativa honesta de esforço
+## 16. Esforço honesto
 
-| Onda | Horas |
-|---|---|
-| 1 | 8 a 12 |
-| 2 | 12 a 18 (o fio e as imagens são o grosso) |
-| 3 | 5 a 8 |
-| Total fase pessoal | 25 a 38 |
+Onda 1: 8 a 12 h · Onda 2: 14 a 20 h · Onda 3: 5 a 8 h · **Total: 27 a 40 h.** Sem custo
+de API (assinatura do Claude Code). Rotina semanal: uma sessão curta por semana.
 
-Sem custo de API: roda na assinatura do Claude Code. A rotina semanal consome uma sessão
-curta por semana.
-
-## 17. Decisões que o dono precisa aprovar
+## 17. Decisões pra aprovar
 
 1. Repositório próprio e privado `professor-ia`.
-2. Git como nuvem do estado nesta fase, com o teste do celular como critério de aceite da
-   onda 1 (falhou → Supabase).
-3. Escala 1 a 10 por evidência da seção 5, incluindo: sobe 1 por sessão; revisão falhada
-   derruba 1; 3 perguntas seguram a subida.
-4. Formato fixo de aula em 3 blocos (lógica → prática → exercício) e regra de imagens.
-5. Mecanismo do fio: 5 classes de pergunta com comportamento fixo, retomada obrigatória,
-   estacionamento após 3 trocas.
-6. Radar: coleta por sessão + rotina semanal (não diário); classes A/A'/B/C/D; máximo 1
-   bloco de atualização por sessão; lista branca da seção 8.3.
-
-Aprovado, a onda 1 começa pela criação do repositório e do script com testes, nessa ordem.
+2. Git como nuvem; celular é o teste de aceite da onda 1 (falhou → Supabase).
+3. Objetivos O1 a O5 e o projeto-síntese ser a versão comercial do próprio Professor IA.
+4. Mapa de 4 trilhas + eixo E, com rotação entre trilhas e mistura só na revisão.
+5. Estrutura de ensino: passo (1 ideia, visual, legenda, checagem), cabeça em ordem a cada
+   3 a 5 passos, regras de forma valendo também pro chat.
+6. Escala 1 a 10 com as regras da seção 6.
+7. O fio: 5 classes, retomada obrigatória, estacionamento após 3 trocas.
+8. Radar: por sessão + semanal, classes A/A'/B/C/D, lista branca da seção 10.
