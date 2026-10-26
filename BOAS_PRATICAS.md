@@ -98,7 +98,13 @@ Decisões que funcionam bem para conversas automatizadas (WhatsApp e similares):
 
 - **Confirmação = botões** (poucos, rótulo curto; o detalhe completo vai no corpo da mensagem, porque rótulo de botão costuma ter limite de caracteres).
 - **Escolha entre muitas opções = lista** com rótulos curtos e detalhes no corpo.
-- **Dê sempre uma saída livre** ao usuário — uma opção tipo "✍️ Outro — me explica o que precisa", para quem não se encaixa nas opções.
+- **Dê sempre uma saída livre** ao usuário — uma opção tipo "✍️ Outro — me explica o que precisa", para quem não se encaixa nas opções. *(reforçado 2026-10-26, porque continua sendo o erro mais comum em fluxo novo)*
+  - **Por quê:** botões e listas cobrem o que quem desenhou previu; o cliente real chega com o caso que ninguém previu. Sem saída, ele digita algo que o fluxo não trata, recebe o mesmo menu de novo e desiste — e isso **não aparece como erro em log nenhum**. Beco sem saída é cliente perdido em silêncio.
+  - **Onde:** em **toda** pergunta fechada, não só no menu inicial — confirmação, escolha de horário, lista de serviços, "quer continuar?". Sempre na última posição (3º botão / último item da lista), com o mesmo rótulo em todo o fluxo, para o cliente reconhecer.
+  - **Rótulo:** curto, humano e convidativo ("me explica o que precisa"), nunca burocrático ("Outros assuntos", "Nenhuma das anteriores").
+  - **A saída precisa levar a algum lugar:** "Outro" é um ramo explícito no desenho do fluxo (princípio 2), não um botão decorativo. O mínimo: ouvir o texto livre → classificar a intenção (LLM só classifica — princípio 7) → rotear para o ramo certo; se não classificar com confiança, **encaminhar para humano** e avisar o cliente que alguém vai responder. Nunca repetir o mesmo menu nem responder "opção inválida".
+  - **Texto livre fora do menu é saída livre implícita.** Cliente que ignora os botões e escreve está usando a saída, só que sem apertar o botão. Trate exatamente igual ao "Outro".
+  - **Na bateria de regressão** (princípio 4), cada menu tem dois casos permanentes: "cliente escolhe Outro" e "cliente digita texto fora das opções". Se um dos dois cai no mesmo menu de novo, o teste falhou.
 - **Nunca peça de novo um dado que a pessoa já deu** — leia o que você tem antes de perguntar.
 - **Vários dados de uma vez:** um por linha, com marcador.
 - **Datas no formato local consistente** (ex: DD/MM/AAAA). Tom humano e natural, nunca robótico.

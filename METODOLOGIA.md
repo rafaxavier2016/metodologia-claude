@@ -145,6 +145,11 @@ Nunca pule do passo 1 direto pro 5. Se algum passo falhar, pare e avise — não
 - **Confirmação** = botões (máx 3, rótulo curto; detalhe completo no CORPO da mensagem).
 - **Seleção múltipla** = lista "Ver opções" com rótulos curtos; detalhes no corpo.
 - **Cliente sempre tem saída livre**: 3º botão/último item `✍️ Outro — me explica o que precisa`.
+  Vale em TODA pergunta fechada (confirmação, horário, serviço, "continuar?"), não só no menu
+  inicial. "Outro" é branch explícito no desenho (regra 2): texto livre → classificar intenção
+  (regra 7) → rotear; sem confiança → humano. Nunca repetir o mesmo menu. Texto digitado fora
+  do menu = mesma saída. Cada menu tem os 2 casos na regressão (regra 4): "escolhe Outro" e
+  "digita fora das opções". *(reforçado 2026-10-26)*
 - Nunca re-pedir dado que o cliente já informou (ler banco antes de perguntar).
 - Pedido de múltiplos dados: um por linha com marcador.
 - Datas sempre DD/MM/AAAA. Tom caloroso, humano, natural — nunca robótico.
